@@ -4,6 +4,19 @@
 
 {% block content %}
 
-<p>{{ greeting }}</p>
+{% for job in jobs %}
+    <div>
+        <div>{{ job['title'] }}</div>
+        {% if job['repeated'] %}
+            <div>{{ job['job_start_date'] }} - {{ job['job_start_date'] }}</div>
+        {% else %}
+            <div>{{ job['day'] }}</div>
+        {% endif %}
+        <div>{{ job['money'] }}</div>
+    </div>
+{% else %}
+    <div>No jobs available.</div>
+{% endfor %}
+
 
 {% endblock %}

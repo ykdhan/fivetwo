@@ -4,8 +4,12 @@ from wtforms.validators import Email, Length, NumberRange, DataRequired, InputRe
 from flask_wtf import FlaskForm, validators
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 import datetime
+from flask_babel import Babel, gettext, ngettext
 from flask_mail import Mail, Message
 import string, random
+import re
+
+import db
 
 
 app = Flask(__name__)
@@ -24,10 +28,39 @@ app.config['SECRET_KEY'] = '52CO Key'
 app.config['WTF_CSRF_ENABLED'] = False
 
 
+
+# app that runs before each db connection.
+@app.before_request
+def before():
+    db.open_db_connection()
+
+
+# app that runs after each db connection.
+@app.teardown_request
+def after(exception):
+    db.close_db_connection()
+
+
+
+
+
 @app.route('/', methods=["GET", "POST"])
 def index():
-    greeting = "Hi"
-    return render_template('index.html', greeting=greeting)
+	jobs = db.jobs()
+	print (jobs)
+	return render_template('index.html', jobs=jobs)
+
+
+class LoginForm(FlaskForm):
+	username = StringField('Nombre de usuario', validators=[DataRequired()])
+	password = PasswordField('Contraseña', validators=[DataRequired()])
+	submit = SubmitField('Registrarse')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    return render_template('login.html', form=form)
 
 
 if __name__ == '__main__':
