@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}52CO{% endblock %}
+
+{% block content %}
+
+
+<div id="page-job">
+    <div class="column-left align--center">
+        <h1>Job</h1>
+
+        <div class="job shadow">
+            <div class="profile align--left">
+                <div class="picture align--middle"></div>
+                <div class="info align--middle">
+                    <div class="user font--main font--black align--left">{{ job['user']['name'] }}</div>
+                    <div class="date font--main align--left">5 days ago</div>
+                </div>
+            </div>
+            <div class="title font--black align--left">{{ job['title'] }}</div>
+            <!--<div class="date font--gray">5 days ago</div>-->
+            <div class="info align--center">
+                <div class="wage font--main font--black align--center"><span class="dollar">$</span>{{ job['money'][:-2] }}<span class="cent">.{{ job['money'][-2:] }}</span></div>
+                <div class="every font--main font--gray align--center">{{ job['every'] }}</div>
+                <div class="day font--main">
+                    {% if job['term'] == 'LONG' %}
+                        {% if job['day'][0] == '0' %}
+                            <span>S</span>
+                        {% else %}
+                            <span class="work">S</span>
+                        {% endif %}
+                        {% if job['day'][1] == '0' %}
+                            <span>M</span>
+                        {% else %}
+                            <span class="work">M</span>
+                        {% endif %}
+                        {% if job['day'][2] == '0' %}
+                            <span>T</span>
+                        {% else %}
+                            <span class="work">T</span>
+                        {% endif %}
+                        {% if job['day'][3] == '0' %}
+                            <span>W</span>
+                        {% else %}
+                            <span class="work">W</span>
+                        {% endif %}
+                        {% if job['day'][4] == '0' %}
+                            <span>T</span>
+                        {% else %}
+                            <span class="work">T</span>
+                        {% endif %}
+                        {% if job['day'][5] == '0' %}
+                            <span>F</span>
+                        {% else %}
+                            <span class="work">F</span>
+                        {% endif %}
+                        {% if job['day'][6] == '0' %}
+                            <span>S</span>
+                        {% else %}
+                            <span class="work">S</span>
+                        {% endif %}
+                    {% else %}
+                        {% if job['start_date'] == job['end_date'] %}
+                            {{ job['start_date'] }}
+                        {% else %}
+                            {{ job['start_date'] }} - {{ job['end_date'] }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="time font--main">{{ job['start_time'] }} - {{ job['end_time'] }}</div>
+            </div>
+            <div class="tags">
+                {% for tag in job['tags'] %}
+                    <div class="tag">#{{ tag['description'] }}</div>
+                {% else %}
+                    <div class="tag">&nbsp;</div>
+                {% endfor %}
+            </div>
+            <div class="align--center">
+                <img class="button" alt="" src="/static/img/card-button.svg">
+            </div>
+        </div>
+
+    </div>
+    <div class="column-right align--center shadow">
+        <div class="row align--left" id="tags">
+            {% for tag in job['tags'] %}
+                <div class="tag">#{{ tag['description'] }}</div>
+            {% else %}
+                <div class="tag">&nbsp;</div>
+            {% endfor %}
+        </div>
+        <div class="row" id="row-description">{{ job['description'] }}</div>
+        <form method="POST">
+        {{ form.csrf_token }}
+            {% for question in job['questions'] %}
+            <div class="row">
+                <div class="question">{{ question['question'] }}</div>
+                <div class="answer"><textarea id="answer{{ question['num'] }}" placeholder="Answer" rows="5"></textarea></div>
+            </div>
+            {% else %}
+            {% endfor %}
+            <div class="row">{{ form.submit(class_='submit') }}</div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+</script>
+
+{% endblock %}

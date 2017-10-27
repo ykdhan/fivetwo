@@ -1,0 +1,411 @@
+/*
+    FONTS
+    Quicksand    font-weight: 200~600
+    Questrial     font-weight: 300,400,700
+*/
+
+
+
+*, *::before, *::after {
+    transition: all ease-out 0.3s;
+}
+
+html {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: block;
+}
+
+body {
+    width: 100%; height: 100%; background: none;
+    display: grid;
+    grid-template-columns: 13rem 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+	font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    color: #474747;
+}
+
+a {
+	text-decoration: none;
+	color: #474747;
+    cursor: pointer;
+}
+a:hover{
+	text-decoration: none;
+	color: #474747;
+}
+
+input, select, button, textarea, pre {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+    outline: none;
+	font-size: 0.8rem;
+	font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    border-radius: 0.25rem;
+}
+
+select {
+    cursor: pointer;
+}
+
+input[type='submit'], button {
+    font-size: 0.9rem;
+    font-family: 'Questrial', sans-serif;
+    font-weight: 500;
+    width: auto;
+    cursor: pointer;
+    background: #fff;
+    border: 0.06rem solid #E55A5A;
+    color: #E55A5A;
+    padding: 0.6rem 0;
+    margin: 0;
+}
+
+input[type='submit']:hover, button:hover {
+    background: #E55A5A;
+    color: #fff;
+}
+
+input[type='text'], input[type='password'], input[type='date'], input[type='time'], input[type='number'], select, textarea {
+    background: #fff;
+    border: 0.06rem solid #cecece;
+    padding: 0.6rem 1rem;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+
+h1 {
+    color: #252525;
+    font-size: 1.1rem;
+    font-family: 'Questrial', sans-serif;
+    font-weight: 500;
+    margin: 0;
+    margin-bottom: 2rem;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+img {
+    margin: 0;
+    vertical-align: middle;
+}
+
+.align--left {
+    text-align: left;
+}
+.align--center {
+    text-align: center;
+}
+.align--right {
+    text-align: right;
+}
+.align--top {
+    vertical-align: middle;
+}
+.align--middle {
+    vertical-align: middle;
+}
+.align--bottom {
+    vertical-align: middle;
+}
+
+.font--black {
+    color: #252525;
+}
+.font--red {
+    color: #E55A5A;
+}
+.font--yellow {
+    color: #FFA539;
+}
+.font--gray {
+    color: #7a7a7a;
+}
+
+.font--body {
+    font-family: 'Quicksand', sans-serif !important;
+    font-weight: 500;
+}
+.font--main {
+    font-family: 'Questrial', sans-serif !important;
+    font-weight: 500 !important;
+}
+.font--300 {
+    font-weight: 300;
+}
+.font--400 {
+    font-weight: 400;
+}
+.font--500 {
+    font-weight: 500;
+}
+.font--600 {
+    font-weight: 600;
+}
+
+.background--black {
+    background-color: #353535;
+}
+.background--red {
+    background-color: #E55A5A;
+}
+.background--yellow {
+    background-color: #FFA539;
+}
+.background--gradient {
+    background: rgb(229,90,90);
+    background: -moz-linear-gradient(left,  rgba(229,90,90,1) 0%, rgba(255,165,57,1) 100%);
+    background: -webkit-linear-gradient(left,  rgba(229,90,90,1) 0%,rgba(255,165,57,1) 100%);
+    background: linear-gradient(to right,  rgba(229,90,90,1) 0%,rgba(255,165,57,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e55a5a', endColorstr='#ffa539',GradientType=1 );
+}
+
+.shadow {
+    -webkit-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    -moz-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+}
+
+.cursor--pointer {
+    cursor: pointer;
+}
+.cursor--default {
+    cursor: default;
+}
+
+
+header {
+    background: #fff;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 10rem 1fr 4rem;
+    height: 100vh;
+    max-height: 100vh;
+}
+header section {
+    padding: 1rem;
+}
+header #logo {
+    cursor: pointer;
+    width: 3rem;
+    height: auto;
+    margin: auto;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+}
+header #profile {
+
+}
+header #profile img {
+    width: 2rem;
+    height: auto;
+    margin-right: 0.4rem;
+}
+header #user-name {
+    display: inline-block;
+    font-size: 0.85rem;
+}
+
+
+
+#page {
+    height: 100vh;
+    max-height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: url('/static/img/campus-background.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.box {
+    margin: 0 auto;
+    padding: 2rem;
+    background: #fff;
+    -webkit-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    -moz-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    border-radius: 0.5rem;
+}
+
+
+.menu {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #bababa;
+    margin: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.menu img {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.7rem;
+    margin-top: -0.1rem;
+    width: 0.9rem;
+    height: auto;
+}
+.menu.now {
+    color: #E55A5A;
+}
+.menu:hover {
+
+}
+
+#div-search {
+    background: #fff;
+    padding: 1rem;
+    margin: 0 auto;
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    z-index: 5;
+}
+#div-search input, #div-search select {
+    width: 9rem;
+    margin-right: 0.5rem;
+}
+#div-search #input-search {
+    width: 16rem;
+}
+#div-search .icon {
+    width: 0.8rem;
+    height: auto;
+    position: absolute;
+    margin-left: -2.2rem;
+    margin-top: 0.85rem;
+}
+
+#jobs {
+    padding: 1rem;
+    margin: 0 auto;
+    min-height: 100%;
+    background: rgb(229,90,90);
+    background: -moz-linear-gradient(left,  rgba(229,90,90,0.8) 0%, rgba(255,165,57,0.8) 100%);
+    background: -webkit-linear-gradient(left,  rgba(229,90,90,0.8) 0%,rgba(255,165,57,0.8) 100%);
+    background: linear-gradient(to right,  rgba(229,90,90,0.8) 0%,rgba(255,165,57,0.8) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e55a5a', endColorstr='#ffa539',GradientType=1 );
+}
+.div-job {
+    display: inline-block;
+    width: 25%;
+}
+.job {
+    background: #fff;
+    border-radius: 0.5rem;
+    width: 15rem;
+    height: 19.5rem;
+    margin: 0.5rem auto;
+    cursor: pointer;
+}
+.job:hover {
+    transform: scale(1.03);
+    transition: transform 0.1s ease-out;
+    z-index: 2;
+}
+.job .profile {
+    padding: 0.8rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+.job .profile .picture {
+    display: inline-block;
+    background-color: #bbb;
+    border-radius: 50%;
+    width: 1.7rem;
+    height: 1.7rem;
+    margin-right: 0.3rem;
+}
+.job .profile .info {
+    display: inline-block;
+}
+.job .profile .user {
+    font-size: 0.8rem;
+}
+.job .profile .date {
+    font-size: 0.7rem;
+    margin-top: 0.15rem;
+    color: #7a7a7a;
+}
+.job .title {
+    font-size: 1rem;
+    padding: 0.8rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.3rem;
+    font-weight: 600;
+    overflow-x: hidden;
+}
+.job .info {
+
+}
+.job .wage {
+    font-size: 2rem;
+    margin-top: 1.5rem;
+}
+.job .wage .dollar {
+    font-size: 1.3rem;
+    margin-right: 0.3rem;
+}
+.job .wage .cent {
+    font-size: 1.3rem;
+}
+.job .every {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    margin-top: 0.1rem;
+    margin-bottom: 1.5rem;
+}
+.job .day {
+    color: #474747;
+    font-size: 0.9rem;
+    background: #cecece;
+    border-radius: 0.25rem;
+    margin: 0 auto;
+    display: inline-block;
+    padding: 0.3rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+}
+.job .day span {
+    color: #aeaeae;
+    margin-right: 0.2rem;
+}
+.job .day .work {
+    color: #252525;
+}
+.job .time {
+    font-size: 0.9rem;
+    margin-top: 0.5em;
+}
+.job .tags {
+    padding: 0.8rem;
+    margin-top: 1.2rem;
+    overflow-x: hidden;
+    text-align: left;
+    min-height: 1.1rem;
+}
+.job .tag {
+    display: inline;
+    font-size: 0.8rem;
+    margin-right: 0.6rem;
+}
+.job .button {
+    width: 1rem;
+}

@@ -1,0 +1,261 @@
+#page-job {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 30rem 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    background: rgb(229,90,90);
+    background: -moz-linear-gradient(left,  rgba(229,90,90,0.8) 0%, rgba(255,165,57,0.8) 100%);
+    background: -webkit-linear-gradient(left,  rgba(229,90,90,0.8) 0%,rgba(255,165,57,0.8) 100%);
+    background: linear-gradient(to right,  rgba(229,90,90,0.8) 0%,rgba(255,165,57,0.8) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e55a5a', endColorstr='#ffa539',GradientType=1 );
+}
+#page-job .column-left h1 {
+    color: #fff;
+}
+#page-job .column-left {
+    height: 100vh;
+    max-height: 100vh;
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 2rem;
+    overflow: hidden;
+}
+#page-job .column-right {
+    height: 100vh;
+    max-height: 100vh;
+    background: #fff;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+#page-job .job {
+    cursor: default;
+}
+#page-job .job:hover {
+    transform: none;
+}
+
+
+#page-job .row {
+    margin: 0 auto 2rem auto;
+    width: 26rem;
+    box-sizing: border-box;
+}
+#page-job textarea, #page-job input {
+    width: 24rem;
+}
+
+#page-job #description {
+    text-align: left;
+}
+#page-job #wage {
+}
+
+
+#page-job .tabs {
+    box-sizing: border-box;
+}
+#page-job .tab {
+    box-sizing: border-box;
+    display: inline-block;
+    background: #fff;
+    border: 0.06rem solid #cecece;
+    border-radius: 0.25rem 0 0 0.25rem;
+    padding: 0.6rem 1rem;
+    margin: 0;
+    border-collapse: collapse;
+    background: none;
+    cursor: pointer;
+    width: 13rem;
+    font-size: 0.8rem;
+    color: #474747;
+    border-collapse: collapse;
+}
+#page-job .tab:last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+#page-job .tab:hover {
+
+}
+#page-job .tab-now {
+    border: 0.06rem solid #E55A5A !important;
+    color: #E55A5A;
+}
+#page-job .tab-now:hover {
+
+}
+#page-job .tab-content {
+    display: none;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    text-align: center;
+}
+#page-job .tab-content-now {
+    display: block;
+}
+#page-job .tab-content input[type='date'] {
+    width: 12.75rem;
+    box-sizing: border-box;
+    margin: 0;
+    margin-right: 0.25rem;
+}
+#page-job .tab-content input[type='date']:last-child {
+    margin: 0;
+    margin-left: 0.25rem;
+}
+#page-job .tab-content ul {
+    width: 27rem;
+    box-sizing: border-box;
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    -webkit-padding-start: 0;
+    margin: 0 auto;
+    padding: 0;
+}
+#page-job .tab-content li {
+    width: 3.71rem;
+    border: 0.06rem solid #cecece;
+    border-right: 0;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    box-sizing: border-box;
+    display: inline-block;
+    background: #fff;
+    font-size: 0.8rem;
+    color: #474747;
+    cursor: pointer;
+    transition: background 0s;
+}
+#page-job .tab-content li:first-child {
+    border-radius: 0.25rem 0 0 0.25rem;
+    width: 3.715rem !important;
+}
+#page-job .tab-content li:last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
+    border-right: 0.06rem solid #cecece;
+    width: 3.74rem !important;
+}
+#page-job .tab-content li:hover {
+    background: #f5f5f5;
+}
+#page-job .tab-content li.selected {
+    background: #E55A5A;
+    color: #fff;
+}
+#page-job .tab-content li.selected:hover {
+    background: #db5959;
+    color: #fff;
+}
+#page-job #tab-time {
+    margin-top: -0.05rem;
+}
+#page-job input[type='time'] {
+    width: 12.75rem;
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 0;
+    margin-right: 0.25rem;
+}
+#page-job input[type='time']:last-child {
+    margin: 0;
+    margin-left: 0.25rem;
+}
+#page-job #job-wage {
+    text-align: right;
+    width: 15.5rem;
+    box-sizing: border-box;
+    margin-right: 0.5rem;
+}
+#page-job .sign {
+    position: absolute;
+    color: #525252;
+    margin-top: 0.6rem;
+    margin-left: 1rem;
+}
+#page-job .arrow {
+    width: 0.7rem;
+    height: auto;
+    position: absolute;
+    margin-left: 8.5rem;
+    margin-top: 1rem;
+}
+#page-job #every {
+    width: 10rem;
+}
+#page-job .question {
+    padding-bottom: 1rem;
+    text-align: left;
+}
+#page-job .add {
+    width: 4rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding-top: 0.5rem;
+    padding-bottom: 0.65rem;
+    text-align: center;
+    background: #fff;
+    border: 0.5px solid #9B9B9B;
+    border-left: 0;
+    margin: 0;
+    display: inline-block;
+    cursor: pointer;
+}
+#page-job .add:hover {
+    background: #f2f2f2;
+}
+#page-job #question2, #page-job #question3 {
+    margin-top: 0.5rem;
+}
+#page-job #job-tag {
+    padding-left: 2rem;
+    width: 23rem;
+}
+#page-job #job-tags {
+    display: inline-block;
+    min-height: 1.8rem;
+    background: #fff;
+    width: 26rem;
+    text-align: left;
+}
+#page-job .job-tag-delete {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: #474747;
+    margin: 0.5rem;
+    cursor: pointer;
+}
+#page-job .job-tag-delete:hover {
+    color: #E55A5A;
+}
+
+#page-job #submit {
+    width: 26rem;
+    margin-bottom: 3rem;
+}
+
+#page-job #tags .tag {
+    display: inline;
+    font-size: 0.9rem;
+    margin-right: 0.6rem;
+}
+
+#page-job #row-description {
+    margin-top: 2rem;
+    margin-bottom: 7rem;
+    text-align: left;
+}

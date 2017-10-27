@@ -2,16 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="52CO" />
+
+    <link rel="stylesheet" type="text/css" href="/static/css/animate.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css?ver=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/css/job.css?ver=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/css/my.css?ver=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css?ver=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/css/remodal.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/remodal-default-theme.css?ver=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Saira:200,300,400,500,600" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Questrial" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/remodal.js"></script>
+
+
+    <!--
+    <script type="text/javascript" src="/static/js/polyfill.js"></script>
+    <script type="text/javascript" src="/static/js/polyfill.position-sticky.js"></script>
+    -->
+
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
 
+<header class="shadow">
+    <section>
+        <div class="align--middle align--center"><a href="{{ url_for('index') }}"><img id="logo" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
+        <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
+    </section>
+{% if login == True %}
+    <style>
+        body {
+            grid-template-columns: 20rem 1fr !important;
+        }
+    </style>
+    <section id="section-login" class="align--center">
+        <div class="tag font--main align--left">Campus</div>
+        <button class="submit" type="button">Log In as Student/Faculty</button>
+        <div class="tag font--main align--left" id="tag-community">Community</div>
+        <form method="POST">
+        {{ login_form.csrf_token }}
+        {{ login_form.email(placeholder="Email Address") }}<br>
+        {{ login_form.password(placeholder="Password") }}<br>
+        {{ login_form.login_submit() }}
+        </form>
+    </section>
+    <section class="align--left align--vertical">
+        &copy; 2017
+    </section>
+{% else %}
+    <section>
+        <a href="{{ url_for('index') }}"><div class="menu now"><img alt="" src="/static/img/icon-search.svg">Search Job</div></a>
+        <a href="{{ url_for('new') }}"><div class="menu"><img alt="" src="/static/img/icon-add-gray.svg">Post Job</div></a>
+        <a href="{{ url_for('posts') }}"><div class="menu"><img alt="" src="/static/img/icon-jobs-gray.svg">My Posts</div></a>
+        <a href="{{ url_for('applications') }}"><div class="menu"><img alt="" src="/static/img/icon-edit-gray.svg">My Applications</div></a>
+    </section>
+    <section class="align--left align--vertical">
+        <div id="profile" class="align--left">
+            <a href="{{ url_for('logout') }}">
+            <img alt="PROFILE" src="/static/img/profile.svg">
+            <div id="user-name" class="font--main font--500 align--middle">{{ current_user.name }}</div>
+            </a>
+        </div>
+    </section>
+{% endif %}
+</header>
 
-
+<div id="page" class="align--center">
 {% block content %}
 
 {% endblock %}
-
+</div>
 
 <div class="alert">
     {% with messages = get_flashed_messages() %}

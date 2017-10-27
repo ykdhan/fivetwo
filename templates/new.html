@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+
+{% block title %}52CO{% endblock %}
+
+{% block content %}
+
+<div id="page-job">
+    <div class="column-left align--center">
+        <h1>New Job</h1>
+
+        <div class="job shadow">
+            <div class="profile align--left">
+                <div class="picture align--middle"></div>
+                <div class="info align--middle">
+                    <div class="user font--main font--black align--left">{{ current_user.name }}</div>
+                    <div class="date font--main align--left">{{ today }}</div>
+                </div>
+            </div>
+            <div class="title font--black align--left" id="preview-title">Title</div>
+            <!--<div class="date font--gray">5 days ago</div>-->
+            <div class="info align--center">
+                <div class="wage font--main font--black align--center" id="preview-wage"><span class="dollar">$</span>0<span class="cent">.00</span></div>
+                <div class="every font--main font--gray align--center" id="preview-every">HOUR</div>
+                <div class="day font--main" id="preview-day">
+                    <span>S</span>
+                    <span>M</span>
+                    <span>T</span>
+                    <span>W</span>
+                    <span>T</span>
+                    <span>F</span>
+                    <span>S</span>
+                </div>
+                <div class="time font--main" id="preview-time">8:00 AM - 9:00 AM</div>
+            </div>
+            <div class="tags" id="preview-tags">
+                <div class="tag">&nbsp;</div>
+            </div>
+            <div class="align--center">
+                <img class="button" alt="" src="/static/img/card-button.svg">
+            </div>
+        </div>
+
+    </div>
+    <div class="column-right align--center shadow">
+        <h1>Information</h1>
+        <form method="POST">
+            {{ form.csrf_token }}
+            <div class="row">{{ form.title(placeholder="Title", class="") }}</div>
+            <div class="row">{{ form.description(placeholder="Description", class="", rows=5) }}</div>
+            <div class="row">
+                <div class="tabs">
+                    <div class="tab tab-now" onclick="tab(event, 'tab-short')">Short Term</div><div class="tab" onclick="tab(event, 'tab-long')">Long Term</div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="tab-short" class="tab-content tab-content-now">
+                    <input type="date" id="start-date" onchange="change_start_date()"><input type="date" id="end-date" onchange="change_end_date()">
+                </div>
+                <div id="tab-long" class="tab-content">
+                    <ul>
+                       <li id="day-sun" onclick="select_day('sun')">S</li><li id="day-mon" onclick="select_day('mon')">M</li><li id="day-tue" onclick="select_day('tue')">T</li><li id="day-wed" onclick="select_day('wed')">W</li><li id="day-thu" onclick="select_day('thu')">T</li><li id="day-fri" onclick="select_day('fri')">F</li><li id="day-sat" onclick="select_day('sat')">S</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div id="tab-time"><input type="time" id="start-time"><input type="time" id="end-time"></div>
+            </div>
+            <div class="row"><input type="number" id="job-wage" placeholder="0.00" step="0.01" min="0" max="1000" >{{ form.every() }}
+            </select></div>
+            <div class="row">
+                <input type="text" id="job-tag" placeholder="Tag">
+                <div id="job-tags">
+                </div>
+            </div>
+            <div class="row">
+                {{ form.question1(placeholder="Question 1") }}<br>
+                {{ form.question2(placeholder="Question 2  (Optional)") }}<br>
+                {{ form.question3(placeholder="Question 3  (Optional)") }}
+            </div>
+            <div class="row">{{ form.submit(class_='submit') }}</div>
+                {{ form.term() }}{{ form.day() }}{{ form.wage() }}
+                {{ form.start_date() }}{{ form.end_date() }}{{ form.start_time() }}{{ form.end_time() }}
+                {{ form.tags() }}
+        </form>
+    </div>
+
+</div>
+
+
+{% if form.errors %}
+    <ul>
+    {% for field_name in form.errors %}
+        {% for field_error in form.errors[field_name] %}
+            <li>{{ form[field_name].label }}: {{ field_error }}</li>
+        {% endfor %}
+    {% endfor %}
+    </ul>
+{% endif %}
+
+
+
+<script>
+
+/* Form */
+var form_title = document.getElementById("title");
+var form_start_date = document.getElementById('start_date');
+var form_end_date = document.getElementById('end_date');
+var form_day = document.getElementById('day');
+var form_term = document.getElementById('term');
+var form_start_time= document.getElementById('start_time');
+var form_end_time = document.getElementById('end_time');
+var form_wage = document.getElementById('wage');
+var form_every = document.getElementById('every');
+var form_tags = document.getElementById('tags');
+
+function init() {
+    document.getElementById('start-time').value = "08:00";
+    document.getElementById('end-time').value = "09:00";
+}
+init();
+
+function tab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tab");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" tab-now", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " tab-now";
+
+    if (tabName == 'tab-short') {
+        document.getElementById('tab-short').innerHTML = '<input type="date" id="start-date" onchange="change_start_date()"><input type="date" id="end-date" onchange="change_end_date()">';
+        form_day.value = '';
+    } else if (tabName == 'tab-long') {
+        days = {
+            sun: 0,
+            mon: 0,
+            tue: 0,
+            wed: 0,
+            thu: 0,
+            fri: 0,
+            sat: 0
+        };
+        document.getElementById('tab-long').innerHTML = '<ul><li id="day-sun" onclick="select_day(\'sun\')">S</li><li id="day-mon" onclick="select_day(\'mon\')">M</li><li id="day-tue" onclick="select_day(\'tue\')">T</li><li id="day-wed" onclick="select_day(\'wed\')">W</li><li id="day-thu" onclick="select_day(\'thu\')">T</li><li id="day-fri" onclick="select_day(\'fri\')">F</li><li id="day-sat" onclick="select_day(\'sat\')">S</li></ul>';
+        form_start_date.value = '';
+        form_end_date.value = '';
+    }
+}
+
+$('#title').keyup(function () {
+    document.getElementById("preview-title").innerHTML = form_title.value;
+});
+
+function change_start_date() {
+    var end = document.getElementById("end-date").value;
+    var input = document.getElementById("start-date").value;
+
+    var date = new Date(input);
+    var months = ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
+    var start_date = months[date.getMonth()] + " " + date.getDate();
+
+    if (end != "") {
+        var date2 = new Date(end);
+        var end_date = months[date2.getMonth()] + " " + date2.getDate();
+    } else  {
+        var end_date = "";
+    }
+
+    document.getElementById("preview-day").innerHTML = "";
+    if (end_date != "") {
+        document.getElementById("preview-day").innerHTML = start_date + " - " + end_date;
+    } else {
+        document.getElementById("preview-day").innerHTML = start_date;
+    }
+
+    form_term.value = 'SHORT';
+    form_start_date.value = input;
+    form_end_date.value = end;
+    form_day.value = '';
+}
+function change_end_date() {
+    var start = document.getElementById("start-date").value;
+    var input = document.getElementById("end-date").value;
+
+    var date = new Date(input);
+    var months = ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
+    var end_date = months[date.getMonth()] + " " + date.getDate();
+
+    if (start != "") {
+        var date2 = new Date(start);
+        var start_date = months[date2.getMonth()] + " " + date2.getDate();
+    } else  {
+        var start_date = "";
+    }
+
+    document.getElementById("preview-day").innerHTML = "";
+    if (start_date != "") {
+        if (start_date != end_date) {
+            document.getElementById("preview-day").innerHTML = start_date + " - " + end_date;
+        } else {
+            document.getElementById("preview-day").innerHTML = end_date;
+        }
+    } else {
+        document.getElementById("preview-day").innerHTML = " - " + end_date;
+    }
+
+    form_term.value = 'SHORT';
+    form_start_date.value = start;
+    form_end_date.value = input;
+    form_day.value = '';
+}
+
+var days = {
+    sun: 0,
+    mon: 0,
+    tue: 0,
+    wed: 0,
+    thu: 0,
+    fri: 0,
+    sat: 0
+};
+function select_day(day) {
+    var data = '';
+    if (days[day] == 1) {
+        days[day] = 0;
+        document.getElementById('day-'+day).className = "";
+    } else {
+        days[day] = 1;
+        document.getElementById('day-'+day).className = "selected";
+    }
+    document.getElementById('preview-day').innerHTML = "";
+    if (days.sun == 1) {
+        document.getElementById('preview-day').innerHTML += "<span class='work'>S</span> ";
+        data += '1/';
+    } else {
+        document.getElementById('preview-day').innerHTML += "<span>S</span> ";
+        data += '0/';
+    }
+    if (days.mon == 1) {
+        document.getElementById('preview-day').innerHTML += "<span class='work'>M</span> ";
+        data += '1/';
+    } else {
+        document.getElementById('preview-day').innerHTML += "<span>M</span> ";
+        data += '0/';
+    }
+    if (days.tue == 1) {
+        document.getElementById('preview-day').innerHTML += "<span class='work'>T</span> ";
+        data += '1/';
+    } else {
+        document.getElementById('preview-day').innerHTML += "<span>T</span> ";
+        data += '0/';
+    }
+    if (days.wed == 1) {
+        document.getElementById('preview-day').innerHTML += "<span class='work'>W</span> ";
+        data += '1/';
+    } else {
+        document.getElementById('preview-day').innerHTML += "<span>W</span> ";
+        data += '0/';
+    }
+    if (days.thu == 1) {
+        document.getElementById('preview-day').innerHTML += "<span class='work'>T</span> ";
+        data += '1/';
+    } else {
+        document.getElementById('preview-day').innerHTML += "<span>T</span> ";
+        data += '0/';
+    }
+    if (days.fri == 1) {
+        document.getElementById('preview-day').innerHTML += "<span class='work'>F</span> ";
+        data += '1/';
+    } else {
+        document.getElementById('preview-day').innerHTML += "<span>F</span> ";
+        data += '0/';
+    }
+    if (days.sat == 1) {
+        document.getElementById('preview-day').innerHTML += "<span class='work'>S</span> ";
+        data += '1';
+    } else {
+        document.getElementById('preview-day').innerHTML += "<span>S</span> ";
+        data += '0';
+    }
+
+    form_day.value = data;
+    form_start_date.value = '';
+    form_end_date.value = '';
+    form_term.value = 'LONG';
+}
+
+$('#start-time').change(function() {
+    var start = document.getElementById("start-time").value;
+    var end = document.getElementById("end-time").value;
+
+    if (end == "") {
+        document.getElementById("end-time").value = start;
+        end = start;
+    }
+
+    var start_h = parseInt(start[0]+start[1]);
+    var start_m = start[3]+start[4];
+    var start_ampm = "AM";
+    if (start_h > 12) {
+        start_h = start_h - 12;
+        start_ampm = "PM";
+    }
+
+    var end_h = parseInt(end[0]+end[1]);
+    var end_m = end[3]+end[4];
+    var end_ampm = "AM";
+    if (end_h > 12) {
+        end_h = end_h - 12;
+        end_ampm = "PM";
+    }
+
+    document.getElementById("preview-time").innerHTML = "";
+    document.getElementById("preview-time").innerHTML = start_h + ":" + start_m + " " + start_ampm + " - " + end_h + ":" + end_m + " " + end_ampm;
+    form_start_time.value = start;
+    form_end_time.value = end;
+});
+$('#end-time').change(function() {
+    var start = document.getElementById("start-time").value;
+    var end = document.getElementById("end-time").value;
+
+    if (start == "") {
+        document.getElementById("start-time").value = end;
+        start = end;
+    }
+
+    var start_h = parseInt(start[0]+start[1]);
+    var start_m = start[3]+start[4];
+    var start_ampm = "AM";
+    if (start_h > 12) {
+        start_h = start_h - 12;
+        start_ampm = "PM";
+    }
+
+    var end_h = parseInt(end[0]+end[1]);
+    var end_m = end[3]+end[4];
+    var end_ampm = "AM";
+    if (end_h > 12) {
+        end_h = end_h - 12;
+        end_ampm = "PM";
+    }
+
+    document.getElementById("preview-time").innerHTML = "";
+    document.getElementById("preview-time").innerHTML = start_h + ":" + start_m + " " + start_ampm + " - " + end_h + ":" + end_m + " " + end_ampm;
+    form_start_time.value = start;
+    form_end_time.value = end;
+});
+
+$('#job-wage').change(function() {
+    var wage = document.getElementById('job-wage').value.indexOf('.');
+    var dollar = "0";
+    var cent = "00";
+    if (wage == -1) {
+        dollar = document.getElementById('job-wage').value;
+    } else {
+        wage = document.getElementById('job-wage').value.toString().split('.');
+        dollar = wage[0];
+        if (wage[1].length == 0) {
+            cent = "00";
+        } else if (wage[1].length == 1) {
+            cent = wage[1]+"0";
+        } else {
+            cent = wage[1][0]+wage[1][1];
+        }
+    }
+    document.getElementById('preview-wage').innerHTML = '<span class="dollar">$</span>'+dollar+'<span class="cent">.'+cent+'</span>';
+    form_wage.value = dollar+cent;
+});
+$('#every').change(function() {
+    document.getElementById('preview-every').innerHTML = form_every.value;
+});
+
+var tags = [];
+$('#job-tag').keydown(function(event){
+    if(event.keyCode == 13) {
+        event.preventDefault();
+        var job_tags = document.getElementById('job-tags');
+        var job_tag = document.getElementById('job-tag');
+        var preview = document.getElementById('preview-tags');
+        var input = delete_space(job_tag.value);
+        if (tags.length == 0) {
+            job_tags.innerHTML = '';
+            preview.innerHTML = '';
+        }
+        job_tags.innerHTML += '<div class="job-tag-delete" onclick="delete_tag(this)">#'+input+'</div>';
+        preview.innerHTML += '<div class="tag">#'+input+'</div>';
+        tags.push(input);
+        job_tag.value = "";
+
+        var save = '';
+        for (var i = 0; i < tags.length; i++) {
+            if (i != tags.length-1) {
+                save += tags[i]+'#'
+            } else {
+                save += tags[i]
+            }
+        }
+        form_tags.value = save;
+
+        return false;
+    }
+});
+function delete_space(text) {
+    if (text.substring(text.length-1, text.length) == " ") {
+        return delete_space(text.substring(0, text.length-1));
+    } else {
+        return text;
+    }
+}
+function delete_tag(tag) {
+    if (window.confirm("Delete this tag?")) {
+        var job_tags = document.getElementById('job-tags');
+        var preview = document.getElementById('preview-tags');
+        var new_list = [];
+        job_tags.innerHTML = "";
+        preview.innerHTML = "";
+        for (var i = 0; i < tags.length; i++) {
+            if (tags[i] != tag.innerHTML.substring(1, tag.innerHTML.length)) {
+                new_list.push(tags[i]);
+                job_tags.innerHTML += '<div class="job-tag-delete" onclick="delete_tag(this)">#' + tags[i] + '</div>';
+                preview.innerHTML += '<div class="tag">#' + tags[i] + '</div>';
+            }
+        }
+        tags = new_list;
+
+        var save = '';
+        for (var i = 0; i < tags.length; i++) {
+            if (i != tags.length-1) {
+                save += tags[i]+'#'
+            } else {
+                save += tags[i]
+            }
+        }
+        form_tags.value = save;
+    }
+}
+
+</script>
+
+{% endblock %}

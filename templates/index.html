@@ -4,19 +4,105 @@
 
 {% block content %}
 
-{% for job in jobs %}
-    <div>
-        <div>{{ job['title'] }}</div>
-        {% if job['repeated'] %}
-            <div>{{ job['job_start_date'] }} - {{ job['job_start_date'] }}</div>
-        {% else %}
-            <div>{{ job['day'] }}</div>
-        {% endif %}
-        <div>{{ job['money'] }}</div>
-    </div>
-{% else %}
-    <div>No jobs available.</div>
-{% endfor %}
+<div id="div-search" class="shadow align--left">
+    <input type="text" id="input-search" placeholder="Search"><img class="icon" alt="" src="/static/img/icon-search.svg">
+    <select>
+        <option selected disabled>Payment</option>
+        <option>Hourly</option>
+        <option>Daily</option>
+        <option>Weekly</option>
+        <option>Monthly</option>
+        <option>One Time</option>
+    </select><img class="icon" alt="" src="/static/img/icon-arrow-down.svg">
+    <select>
+        <option selected disabled>Term</option>
+        <option>Long</option>
+        <option>Short</option>
+    </select><img class="icon" alt="" src="/static/img/icon-arrow-down.svg">
+    <select>
+        <option selected>Date posted</option>
+        <option>Date of work<i class="fa fa-arrow-up" aria-hidden="true"></i></option>
+        <option>Wage<i class="fa fa-arrow-down" aria-hidden="true"></i></option>
+    </select><img class="icon" alt="" src="/static/img/icon-arrow-down.svg">
+</div>
 
+<div id="jobs" class="align--left">
+    {% for job in jobs %}<div class="div-job">
+    <a href="/job/{{ job['id'] }}">
+    <div class="job shadow">
+        <div class="profile align--left">
+            <div class="picture align--middle"></div>
+            <div class="info align--middle">
+                <div class="user font--main font--black align--left">{{ job['user']['name'] }}</div>
+                <div class="date font--main align--left">5 days ago</div>
+            </div>
+        </div>
+        <div class="title font--black align--left">{{ job['title'] }}</div>
+        <!--<div class="date font--gray">5 days ago</div>-->
+        <div class="info align--center">
+            <div class="wage font--main font--black align--center"><span class="dollar">$</span>{{ job['money'][:-2] }}<span class="cent">.{{ job['money'][-2:] }}</span></div>
+            <div class="every font--main font--gray align--center">{{ job['every'] }}</div>
+            <div class="day font--main">
+                {% if job['term'] == 'LONG' %}
+                    {% if job['day'][0] == '0' %}
+                        <span>S</span>
+                    {% else %}
+                        <span class="work">S</span>
+                    {% endif %}
+                    {% if job['day'][1] == '0' %}
+                        <span>M</span>
+                    {% else %}
+                        <span class="work">M</span>
+                    {% endif %}
+                    {% if job['day'][2] == '0' %}
+                        <span>T</span>
+                    {% else %}
+                        <span class="work">T</span>
+                    {% endif %}
+                    {% if job['day'][3] == '0' %}
+                        <span>W</span>
+                    {% else %}
+                        <span class="work">W</span>
+                    {% endif %}
+                    {% if job['day'][4] == '0' %}
+                        <span>T</span>
+                    {% else %}
+                        <span class="work">T</span>
+                    {% endif %}
+                    {% if job['day'][5] == '0' %}
+                        <span>F</span>
+                    {% else %}
+                        <span class="work">F</span>
+                    {% endif %}
+                    {% if job['day'][6] == '0' %}
+                        <span>S</span>
+                    {% else %}
+                        <span class="work">S</span>
+                    {% endif %}
+                {% else %}
+                    {% if job['start_date'] == job['end_date'] %}
+                        {{ job['start_date'] }}
+                    {% else %}
+                        {{ job['start_date'] }} - {{ job['end_date'] }}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="time font--main">{{ job['start_time'] }} - {{ job['end_time'] }}</div>
+        </div>
+        <div class="tags">
+            {% for tag in job['tags'] %}
+                <div class="tag">#{{ tag['description'] }}</div>
+            {% else %}
+                <div class="tag">&nbsp;</div>
+            {% endfor %}
+        </div>
+        <div class="align--center">
+            <img class="button" alt="" src="/static/img/card-button.svg">
+        </div>
+    </div></a>
+    </div>{% else %}
+        <div>No jobs available.</div>
+    {% endfor %}
+</div>
 
 {% endblock %}

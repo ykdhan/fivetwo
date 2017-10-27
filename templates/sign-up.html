@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}52CO{% endblock %}
+
+{% block content %}
+
+<div id="page-sign-up" class="align--center">
+    <div id="div-sign-up" class="box">
+        <h1>Profile Information</h1>
+        <form method="POST">
+            {{ signup_form.csrf_token }}
+            <div class="row">{{ signup_form.gender(class="") }}</div>
+            <div class="row">{{ signup_form.contact(placeholder="Contact", class="") }}</div>
+            <div class="row">{{ signup_form.birth(placeholder="Date of Birth (mm/dd/yyyy)", class="") }}</div>
+            {% if is_campus == True %}
+                {% if is_campus == True %}
+                <div class="row">{{ signup_form.major(placeholder="Major", class="") }}</div>
+                <div class="row">{{ signup_form.year(class="") }}</div>
+                {% else %}
+                <div class="row">{{ signup_form.department(placeholder="Department", class="") }}</div>
+                <div class="row">{{ signup_form.position(placeholder="Position", class="") }}</div>
+                {% endif %}
+            {% endif %}
+            <div class="row">{{ signup_form.signup_submit(class_='submit') }}</div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
