@@ -4,15 +4,13 @@ import datetime
 import random
 
 import os
-DATABASE = '52CO.sqlite'
-
+DB_PATH = '/var/www/52CO/52CO.sqlite'
 
 # Connect to the database.
 def connect_db():
-    db_path = os.path.join(DATABASE)
-    if not os.path.isfile(db_path):
-        raise RuntimeError("Can't find database file '{}'".format(db_path))
-    connection = sqlite3.connect(db_path)
+    if not os.path.isfile(DB_PATH):
+        raise RuntimeError("Can't find database file '{}'".format(DB_PATH))
+    connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
     return connection
 
