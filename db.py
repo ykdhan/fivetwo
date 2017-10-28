@@ -6,6 +6,7 @@ import random
 import os
 DB_PATH = '/var/www/52CO/52CO.sqlite'
 
+
 # Connect to the database.
 def connect_db():
     if not os.path.isfile(DB_PATH):
