@@ -17,13 +17,14 @@ CREATE TABLE user
 DROP TABLE IF EXISTS user_campus;
 CREATE TABLE user_campus
 (
-  id            INTEGER PRIMARY KEY, /* user id */
-  is_student    TEXT DEFAULT 'NO',
+  id            INTEGER REFERENCES user (id),
+  is_student    TEXT DEFAULT 'YES',
   major         TEXT NULL,
   class_year    TEXT NULL,
   department    TEXT NULL,
   position      TEXT NULL,
-  created_at     DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
 );
 
 

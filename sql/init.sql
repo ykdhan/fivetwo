@@ -6,6 +6,8 @@ INSERT INTO user (id, email, password, name, gender, contact, date_of_birth, is_
     VALUES (59385471, 'sungsoo_kim@taylor.edu','test','Sung Kim','M','123-321-7890','2001-01-04','YES', 'YES');
 INSERT INTO user (id, email, password, name, gender, contact, date_of_birth, is_campus, is_registered)
     VALUES (49382932, 'tu@taylor.edu','test','Taylor University','M','123-321-7890','1830-04-29','NO', 'YES');
+INSERT INTO user (id, email, password, name, gender, contact, date_of_birth, is_campus, is_registered)
+    VALUES (58373958, 'test@test.com','test','Tester','M','123-123-1230','2000-02-20','NO', 'YES');
 
 INSERT INTO user_campus (id, is_student, major, class_year, department, position)
     VALUES (59385471, 'YES','Computer Science','Senior', NULL, NULL);

@@ -9,8 +9,11 @@
         <h1>Profile Information</h1>
         <form method="POST">
             {{ signup_form.csrf_token }}
+            {% if is_campus == True %}
+            <div class="row">{{ signup_form.name(class="",placeholder="Name") }}</div>
+            {% endif %}
             <div class="row">{{ signup_form.gender(class="") }}</div>
-            <div class="row">{{ signup_form.contact(placeholder="Contact", class="") }}</div>
+            <div class="row">{{ signup_form.contact(placeholder="Phone (123-456-7890)", class="") }}</div>
             <div class="row">{{ signup_form.birth(placeholder="Date of Birth (mm/dd/yyyy)", class="") }}</div>
             {% if is_campus == True %}
                 {% if is_campus == True %}

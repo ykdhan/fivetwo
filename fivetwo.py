@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, redirect, url_for, request
+from flask import Flask, render_template, flash, redirect, url_for, request, session
 from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, IntegerField, PasswordField, BooleanField, HiddenField, TextAreaField
 from wtforms.validators import Email, Length, NumberRange, DataRequired, InputRequired, EqualTo, AnyOf, Regexp, Optional
 from flask_wtf import FlaskForm, validators
@@ -27,8 +27,8 @@ app.config.update(
     MAIL_SERVER='smtp.mail.com',
     MAIL_PORT=465,
     MAIL_USE_SSL=True,
-    MAIL_USERNAME='zero.defects@mail.com',
-    MAIL_PASSWORD='Zerodefects1!'
+    MAIL_USERNAME='fivetwo@mail.com',
+    MAIL_PASSWORD='Five&Two52'
 )
 app.config['SECRET_KEY'] = '52CO Key'
 app.config['WTF_CSRF_ENABLED'] = False
@@ -42,13 +42,6 @@ def before():
 @app.teardown_request
 def after(exception):
     db.close_db_connection()
-
-
-@app.route('/cas')
-def cas():
-    print(cas)
-    user = cas.attributes['cas:username']
-    return render_template('cas.html', username=user)
 
 
 # LOGIN
@@ -107,7 +100,7 @@ def login():
             #flash('Invalid username or password')
     if signup_form.validate_on_submit():
         if signup_form.password.data == signup_form.cpassword.data:
-            rowcount = db.sign_up(signup_form.name.data, signup_form.email.data, signup_form.password.data)
+            rowcount = db.sign_up(signup_form.name.data, signup_form.email.data, signup_form.password.data, 'NO')
             if rowcount == 1:
                 if authenticate(signup_form.email.data, signup_form.password.data):
                     user = User(email)
@@ -124,7 +117,29 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
-    logout_user()
+    if current_user.is_campus == 'YES':
+        logout_user()
+        return redirect('/cas/logout')
+    else:
+        logout_user()
+        return redirect(url_for('index'))
+
+
+@app.route('/cas')
+def cas():
+    username = session[app.config['CAS_USERNAME_SESSION_KEY']]
+    fn, ln = username.split('_', 2)
+    if ln[-1] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+        ln = ln[:-1]
+    name = fn.title()+" "+ln.title()
+    print(db.have_user(username))
+    if db.have_user(username) is None:
+        rowcount = db.sign_up(name, username, 'Five&Two52', 'YES')
+        print('new')
+    else:
+        print('existing')
+    user = User(username)
+    login_user(user)
     return redirect(url_for('index'))
 
 
@@ -163,6 +178,7 @@ def index():
             job['start_date'] = start_month+" "+str(start_day)+", "+start_year
             job['end_date'] = end_month+" "+str(end_day)+", "+end_year
 
+        print(j['start_time'])
         start_hour = int(datetime.datetime.strptime(j['start_time'], '%H:%M').strftime("%H"))
         start_minute = datetime.datetime.strptime(j['start_time'], '%H:%M').strftime("%M")
         start_ampm = "AM"
@@ -305,6 +321,9 @@ def new():
         print('Tags:'+str(post_form.tags.data))
         print('Term:'+str(post_form.term.data))
 
+        start_date = datetime.datetime.strptime(post_form.start_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
+        end_date = datetime.datetime.strptime(post_form.end_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
+
         tags = post_form.tags.data.split("#")
         questions = []
 
@@ -315,9 +334,9 @@ def new():
         if post_form.question3.data is not None and post_form.question3.data != "":
             questions.append(post_form.question3.data)
 
-        rowcount = db.post_job(current_user.id, post_form.title.data, post_form.description.data, post_form.term.data, post_form.start_date.data,
-                           post_form.end_date.data, post_form.start_time.data, post_form.end_time.data, post_form.day.data,
-                           post_form.wage.data, post_form.every.data, tags, questions)
+        rowcount = db.post_job(current_user.id, post_form.title.data, post_form.description.data, post_form.term.data, start_date,
+                           end_date, post_form.start_time.data, post_form.end_time.data, post_form.day.data,
+                           int(post_form.wage.data), post_form.every.data, tags, questions)
         if rowcount == 1:
             return redirect(url_for('index'))
         else:
@@ -354,6 +373,7 @@ def posts():
             end_year = datetime.datetime.strptime(j['end_date'], '%Y-%m-%d').strftime("%y")
             job['start_date'] = start_month + " " + str(start_day) + ", " + start_year
             job['end_date'] = end_month + " " + str(end_day) + ", " + end_year
+
 
         start_hour = int(datetime.datetime.strptime(j['start_time'], '%H:%M').strftime("%H"))
         start_minute = datetime.datetime.strptime(j['start_time'], '%H:%M').strftime("%M")
@@ -476,28 +496,29 @@ def sign_up():
     if db.user(current_user.id) is None:
         return redirect(url_for('index'))
     if user['is_campus'] == 'YES':
+        signup_form = SignUpMoreFormCampus()
+        signup_form.name.data = current_user.name
         is_campus = True
         if user['is_student'] == 'YES':
             is_student = True
         else:
             is_student = False
     else:
+        signup_form = SignUpMoreForm()
         is_campus = False
         is_student = False
-
-    signup_form = SignUpMoreForm()
 
     if signup_form.is_submitted():
         if is_campus:
             if is_student:
-                rowcount = db.sign_up_more(current_user.id, signup_form.gender.data, signup_form.contact.data,
+                rowcount = db.sign_up_more(current_user.id, signup_form.name.data, signup_form.gender.data, signup_form.contact.data,
                                            signup_form.birth.data, signup_form.major.data, signup_form.year.data, None, None)
             else:
-                rowcount = db.sign_up_more(current_user.id, signup_form.gender.data, signup_form.contact.data,
+                rowcount = db.sign_up_more(current_user.id, signup_form.name.data, signup_form.gender.data, signup_form.contact.data,
                                            signup_form.birth.data, None, None, signup_form.department.data,
                                            signup_form.position.data)
         else:
-            rowcount = db.sign_up_more(current_user.id, signup_form.gender.data, signup_form.contact.data, signup_form.birth.data,
+            rowcount = db.sign_up_more(current_user.id, None, signup_form.gender.data, signup_form.contact.data, signup_form.birth.data,
                                        None, None, None, None)
         if rowcount == 1:
             return redirect(url_for('index'))
@@ -525,6 +546,14 @@ class SignUpMoreForm(FlaskForm):
     gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
     contact = StringField('Email Address')
     birth = StringField('Email Address')
+    signup_submit = SubmitField('Sign Up')
+
+
+class SignUpMoreFormCampus(FlaskForm):
+    name = StringField('Name')
+    gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
+    contact = StringField('Email Address')
+    birth = StringField('Email Address')
     major = StringField('Major')
     year = SelectField('Class Year', choices=[('Freshman', 'Freshman'), ('Sophomore', 'Sophomore'), ('Junior', 'Junior'), ('Senior', 'Senior')])
     department = StringField('Department')
@@ -539,10 +568,12 @@ class PostForm(FlaskForm):
     question2 = StringField('Question 2')
     question3 = StringField('Question 3')
     term = HiddenField('Term')
-    start_date = HiddenField('Start Date')
-    end_date = HiddenField('End Date')
-    start_time = HiddenField('Start Time')
-    end_time = HiddenField('End Time')
+    start_date = StringField('Start Date')
+    end_date = StringField('End Date')
+    start_time = StringField('Start Time')
+    end_time = StringField('End Time')
+    start_ampm = SelectField('Start AMPM', choices=[('AM', 'AM'), ('PM', 'PM')])
+    end_ampm = SelectField('End AMPM', choices=[('AM', 'AM'), ('PM', 'PM')])
     day = HiddenField('Day')
     wage = HiddenField('Wage')
     every = SelectField('Every', choices=[("HOUR", "Hour"),("DAY", "Day"),("WEEK", "Week"),("MONTH", "Month"),("ONE TIME", "One Time")])

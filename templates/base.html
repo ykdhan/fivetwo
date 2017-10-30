@@ -34,7 +34,7 @@
 
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body>
+<body class="animated fadeIn">
 
 <header class="shadow">
     <section>
@@ -44,7 +44,7 @@
 {% if login == True %}
     <style>
         body {
-            grid-template-columns: 20rem 1fr !important;
+            grid-template-columns: 22rem 1fr !important;
         }
     </style>
     <section id="section-login" class="align--center">
@@ -70,11 +70,7 @@
     </section>
     <section class="align--left align--vertical">
         <div id="profile" class="align--left">
-            {% if current.is_campus %}
-                <a href="/cas/logout">
-            {% else %}
-                <a href="{{ url_for('logout') }}">
-            {% endif %}
+            <a href="{{ url_for('logout') }}">
             <img alt="PROFILE" src="/static/img/profile.svg">
             <div id="user-name" class="font--main font--500 align--middle">{{ current_user.name }}</div>
             </a>

@@ -4,7 +4,10 @@ import datetime
 import random
 
 import os
+
+
 DB_PATH = '/var/www/52CO/52CO.sqlite'
+# DB_PATH = '52CO.sqlite'
 
 
 # Connect to the database.
@@ -50,12 +53,16 @@ def user(id):
     return user
 
 
+def have_user(email):
+    return g.db.execute('SELECT * FROM user WHERE email = ?', (email,)).fetchone()
+
+
 def user_info(email):
     u = g.db.execute('SELECT * FROM user WHERE email = ?', (email,)).fetchone()
     if u is None:
         return None
     if u['is_campus'] == 'YES':
-        user = g.db.execute('SELECT * FROM user INNER JOIN user_campus ON user.id = user_campus.id WHERE email = ?', (email,)).fetchone()
+        user = g.db.execute('SELECT * FROM user INNER JOIN user_campus ON user.id = user_campus.id WHERE user.id = ?', (u['id'],)).fetchone()
     else:
         user = u
     return user
@@ -65,44 +72,57 @@ def users():
     return g.db.execute('SELECT * FROM user').fetchall()
 
 
-def sign_up(name, email, password):
+def sign_up(name, email, password, is_campus):
     user_id = random_id(8)
 
-    if user_info(email) is None:
+    if have_user(email) is None:
         signup = '''
-                      INSERT INTO user (id, name, email, password)
-                     VALUES (:user_id, :name, :email, :password)
+                      INSERT INTO user (id, name, email, password, is_campus)
+                     VALUES (:user_id, :name, :email, :password, :is_campus)
                      '''
-        signup_cursor = g.db.execute(signup, {'user_id': user_id, 'name': name, 'email': email, 'password': password})
+        signup_cursor = g.db.execute(signup, {'user_id': user_id, 'name': name, 'email': email, 'password': password, 'is_campus': is_campus})
         g.db.commit()
         if signup_cursor.rowcount == 1:
-            return 1
-        else:
+            if is_campus == 'YES':
+                campus = 'INSERT INTO user_campus (id) VALUES (:user_id)'
+                campus_cursor = g.db.execute(campus, {'user_id': user_id})
+                g.db.commit()
+                if campus_cursor.rowcount == 1:
+                    return 1
             return 2
+        else:
+            return 3
     return 0
 
 
-def sign_up_more(user_id, gender, contact, date_of_birth, major, year, department, position):
+def sign_up_more(user_id, name, gender, contact, date_of_birth, major, year, department, position):
     birth = datetime.datetime.strptime(date_of_birth, '%m/%d/%Y').strftime("%Y-%m-%d")
     signup = 'UPDATE user SET gender = :gender, contact = :contact, date_of_birth = :birth WHERE id = :user_id'
     signup_cursor = g.db.execute(signup, {'user_id': user_id, 'gender': gender, 'contact': contact, 'birth': birth})
     g.db.commit()
     if signup_cursor.rowcount == 1:
         if major is not None:
+            signup_name = 'UPDATE user SET name = :user_name WHERE id = :user_id'
+            name_cursor = g.db.execute(signup_name, {'user_id': user_id, 'user_name': name})
+            g.db.commit()
+            print('name')
             student = '''
-                            INSERT INTO user_campus (id, is_student, major, class_year)
-                            VALUES (:user_id, :is_student, :major, :class_year)
+                            UPDATE user_campus SET is_student = :is_student, major = :major, class_year = :class_year
+                            WHERE id = :user_id
                                  '''
             student_cursor = g.db.execute(student, {'user_id': user_id, 'is_student': 'YES', 'major': major, 'class_year': year})
             g.db.commit()
             if student_cursor.rowcount != 1:
                 return 0
         elif department is not None:
+            signup_name = 'UPDATE user SET name = :name WHERE id = :user_id'
+            name_cursor = g.db.execute(signup_name, {'name': name})
+            g.db.commit()
             faculty = '''
-                            INSERT INTO user_campus (id, department, position)
-                            VALUES (:user_id, :department, :position)
+                            UPDATE user_campus SET is_student = :is_student, department = :department, position = :position
+                            WHERE id = :user_id
                                  '''
-            faculty_cursor = g.db.execute(faculty, {'user_id': user_id, 'department': department, 'position': position})
+            faculty_cursor = g.db.execute(faculty, {'user_id': user_id, 'is_student': 'NO', 'department': department, 'position': position})
             g.db.commit()
             if faculty_cursor.rowcount != 1:
                 return 0
