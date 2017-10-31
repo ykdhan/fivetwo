@@ -101,8 +101,6 @@
 
 /* Form */
 var form_title = document.getElementById("title");
-var form_start_date = document.getElementById('start_date');
-var form_end_date = document.getElementById('end_date');
 var form_day = document.getElementById('day');
 var form_term = document.getElementById('term');
 var form_start_time= document.getElementById('start_time');
@@ -117,7 +115,7 @@ var end_ampm = document.getElementById('end_ampm');
 function init() {
     document.getElementById('start_time').value = "8:00";
     document.getElementById('end_time').value = "9:00";
-    form_term = "LONG";
+    form_term.value = "LONG";
 }
 init();
 
@@ -135,8 +133,9 @@ function tab(evt, tabName) {
     evt.currentTarget.className += " tab-now";
 
     if (tabName == 'tab-short') {
-        document.getElementById('tab-short').innerHTML = '<input type="text" id="start_date" placeholder="Start Date (mm/dd/yyyy)" onchange="change_start_date()"><input type="text" id="end_date" placeholder="End Date (mm/dd/yyyy)" onchange="change_end_date()">';
+        document.getElementById('tab-short').innerHTML = '<input id="start_date" name="start_date" onchange="change_start_date()" placeholder="Start Date (mm/dd/yyyy)" value="" type="text"><input id="end_date" name="end_date" onchange="change_end_date()" placeholder="End Date (mm/dd/yyyy)" value="" type="text">';
         form_day.value = '';
+        form_term.value = 'SHORT';
     } else if (tabName == 'tab-long') {
         days = {
             sun: 0,
@@ -148,8 +147,9 @@ function tab(evt, tabName) {
             sat: 0
         };
         document.getElementById('tab-long').innerHTML = '<ul><li id="day-sun" onclick="select_day(\'sun\')">S</li><li id="day-mon" onclick="select_day(\'mon\')">M</li><li id="day-tue" onclick="select_day(\'tue\')">T</li><li id="day-wed" onclick="select_day(\'wed\')">W</li><li id="day-thu" onclick="select_day(\'thu\')">T</li><li id="day-fri" onclick="select_day(\'fri\')">F</li><li id="day-sat" onclick="select_day(\'sat\')">S</li></ul>';
-        form_start_date.value = '';
-        form_end_date.value = '';
+        document.getElementById('start_date').value = '';
+        document.getElementById('end_date').value = '';
+        form_term.value = 'LONG';
     }
 }
 
@@ -158,8 +158,8 @@ $('#title').keyup(function () {
 });
 
 function change_start_date() {
-    var end = form_end_date.value;
-    var input = form_start_date.value;
+    var end = document.getElementById('end_date').value;
+    var input = document.getElementById('start_date').value;
 
     var date = new Date(input);
     var months = ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
@@ -183,8 +183,8 @@ function change_start_date() {
     form_day.value = '';
 }
 function change_end_date() {
-    var start = form_start_date.value;
-    var input = form_end_date.value;
+    var start = document.getElementById('start_date').value;
+    var input = document.getElementById('end_date').value;
 
     var date = new Date(input);
     var months = ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
@@ -282,8 +282,8 @@ function select_day(day) {
     }
 
     form_day.value = data;
-    form_start_date.value = '';
-    form_end_date.value = '';
+    document.getElementById('start_date').value = '';
+    document.getElementById('end_date').value = '';
     form_term.value = 'LONG';
 }
 
@@ -463,6 +463,13 @@ function delete_tag(tag) {
         form_tags.value = save;
     }
 }
+
+
+
+
+document.getElementById('menu-new').style.color = '#E55A5A';
+document.getElementById('menu-new').innerHTML = '<img alt="" src="/static/img/icon-add.svg">Post New';
+
 
 </script>
 

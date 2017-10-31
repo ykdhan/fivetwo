@@ -178,7 +178,6 @@ def index():
             job['start_date'] = start_month+" "+str(start_day)+", "+start_year
             job['end_date'] = end_month+" "+str(end_day)+", "+end_year
 
-        print(j['start_time'])
         start_hour = int(datetime.datetime.strptime(j['start_time'], '%H:%M').strftime("%H"))
         start_minute = datetime.datetime.strptime(j['start_time'], '%H:%M').strftime("%M")
         start_ampm = "AM"
@@ -217,8 +216,6 @@ def index():
 @app.route('/job/<job_id>', methods=["GET", "POST"])
 def job(job_id):
     today = datetime.datetime.today()
-
-    print(str(today))
 
     j = db.job(job_id)
 
@@ -321,8 +318,12 @@ def new():
         print('Tags:'+str(post_form.tags.data))
         print('Term:'+str(post_form.term.data))
 
-        start_date = datetime.datetime.strptime(post_form.start_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
-        end_date = datetime.datetime.strptime(post_form.end_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
+        if post_form.term.data == 'LONG':
+            start_date = None
+            end_date = None
+        else:
+            start_date = datetime.datetime.strptime(post_form.start_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
+            end_date = datetime.datetime.strptime(post_form.end_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
 
         tags = post_form.tags.data.split("#")
         questions = []
@@ -589,5 +590,5 @@ class JobForm(FlaskForm):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 

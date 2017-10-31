@@ -6,8 +6,8 @@ import random
 import os
 
 
-DB_PATH = '/var/www/52CO/52CO.sqlite'
-# DB_PATH = '52CO.sqlite'
+# DB_PATH = '/var/www/52CO/52CO.sqlite'
+DB_PATH = '52CO.sqlite'
 
 
 # Connect to the database.
@@ -184,8 +184,6 @@ def post_job(user_id, title, description, term, start_date, end_date, start_time
         end_date = None
     else:
         day = None
-
-    money = money * 100
 
     create = '''
               INSERT INTO job (id, user_id, title, description, term, start_date, end_date, start_time,

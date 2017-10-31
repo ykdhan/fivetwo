@@ -63,10 +63,10 @@
     </section>
 {% else %}
     <section>
-        <a href="{{ url_for('index') }}"><div class="menu now"><img alt="" src="/static/img/icon-search.svg">Search Job</div></a>
-        <a href="{{ url_for('new') }}"><div class="menu"><img alt="" src="/static/img/icon-add-gray.svg">Post Job</div></a>
-        <a href="{{ url_for('posts') }}"><div class="menu"><img alt="" src="/static/img/icon-jobs-gray.svg">My Posts</div></a>
-        <a href="{{ url_for('applications') }}"><div class="menu"><img alt="" src="/static/img/icon-edit-gray.svg">My Applications</div></a>
+        <a href="{{ url_for('index') }}"><div class="menu" id="menu-search"><img alt="" src="/static/img/icon-search-gray.svg">Search Job</div></a>
+        <a href="{{ url_for('new') }}"><div class="menu" id="menu-new"><img alt="" src="/static/img/icon-add-gray.svg">Post Job</div></a>
+        <a href="{{ url_for('posts') }}"><div class="menu" id="menu-posts"><img alt="" src="/static/img/icon-jobs-gray.svg">My Posts</div></a>
+        <a href="{{ url_for('applications') }}"><div class="menu" id="menu-applications"><img alt="" src="/static/img/icon-edit-gray.svg">My Applications</div></a>
     </section>
     <section class="align--left align--vertical">
         <div id="profile" class="align--left">
