@@ -85,7 +85,7 @@
             <span class="status font--yellow">Posted</span><span class="applications">{{ job['num_applications'] }}</span>
         </div></a>
         </div>{% else %}
-            <div>No jobs posted.</div>
+            <div class="empty-list"><a class="link--white" href="{{ url_for('new') }}">Post</a> a new job!</div>
         {% endfor %}
     </div>
 

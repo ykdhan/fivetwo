@@ -16,17 +16,51 @@
             <div class="row">{{ signup_form.contact(placeholder="Phone (123-456-7890)", class="") }}</div>
             <div class="row">{{ signup_form.birth(placeholder="Date of Birth (mm/dd/yyyy)", class="") }}</div>
             {% if is_campus == True %}
-                {% if is_campus == True %}
-                <div class="row">{{ signup_form.major(placeholder="Major", class="") }}</div>
-                <div class="row">{{ signup_form.year(class="") }}</div>
-                {% else %}
-                <div class="row">{{ signup_form.department(placeholder="Department", class="") }}</div>
-                <div class="row">{{ signup_form.position(placeholder="Position", class="") }}</div>
-                {% endif %}
+                <div class="row">
+                    <div class="tabs">
+                        <div class="tab tab-now" onclick="tab(event, 'tab-student')">Student</div><div class="tab" onclick="tab(event, 'tab-faculty')">Faculty</div>
+                    </div>
+                    {{ signup_form.is_student() }}
+                </div>
+                <div id="tab-student" class="tab-content tab-content-now">
+                    <div class="row">{{ signup_form.major(placeholder="Major", class="") }}</div>
+                    <div class="row">{{ signup_form.year(class="") }}</div>
+                </div>
+                <div id="tab-faculty" class="tab-content">
+                    <div class="row">{{ signup_form.department(placeholder="Department", class="") }}</div>
+                    <div class="row">{{ signup_form.position(placeholder="Position", class="") }}</div>
+                </div>
             {% endif %}
             <div class="row">{{ signup_form.signup_submit(class_='submit') }}</div>
         </form>
     </div>
 </div>
+
+<script>
+
+
+function tab(evt, tabName) {
+
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tab");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" tab-now", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " tab-now";
+
+    if (tabName == 'tab-student') {
+        document.getElementById('is_student').value = 'YES';
+    } else if (tabName == 'tab-faculty') {
+        document.getElementById('is_student').value = 'NO';
+    }
+}
+
+
+</script>
 
 {% endblock %}

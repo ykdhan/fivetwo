@@ -5,9 +5,9 @@
     margin: 0 auto;
     min-height: 100%;
     background: rgb(229,90,90);
-    background: -moz-linear-gradient(left,  rgba(229,90,90,0.8) 0%, rgba(255,165,57,0.8) 100%);
-    background: -webkit-linear-gradient(left,  rgba(229,90,90,0.8) 0%,rgba(255,165,57,0.8) 100%);
-    background: linear-gradient(to right,  rgba(229,90,90,0.8) 0%,rgba(255,165,57,0.8) 100%);
+    background: -moz-linear-gradient(left,  rgba(229,90,90,0.85) 0%, rgba(255,165,57,0.85) 100%);
+    background: -webkit-linear-gradient(left,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
+    background: linear-gradient(to right,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e55a5a', endColorstr='#ffa539',GradientType=1 );
     vertical-align: middle;
 }
@@ -110,4 +110,76 @@
     display: inline-block;
     padding: 1rem;
     text-align: right;
+}
+
+#page-posts .empty-list, #page-applications .empty-list {
+    margin: 1rem;
+    color: #eee !important;
+}
+
+
+
+
+
+
+#page-profile {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0 auto;
+    min-height: 100%;
+    vertical-align: middle;
+    background: #fff;
+}
+#page-profile #div-picture {
+    margin: 0 auto;
+    padding: 2rem;
+    height: 10rem;
+    background: rgb(229,90,90);
+    background: -moz-linear-gradient(left,  rgba(229,90,90,0.85) 0%, rgba(255,165,57,0.85) 100%);
+    background: -webkit-linear-gradient(left,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
+    background: linear-gradient(to right,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e55a5a', endColorstr='#ffa539',GradientType=1 );
+    vertical-align: middle;
+    overflow-y: visible;
+}
+#page-profile #div-picture h1 {
+    color: #fff;
+}
+#page-profile #div-profile {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0 auto;
+    background: #fff;
+    vertical-align: middle;
+    padding: 2rem;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+}
+#page-profile #preview-picture {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 25rem;
+    padding: 0;
+    margin-top: 2rem;
+}
+#page-profile .row {
+    margin: 0 auto 1rem auto;
+    width: 26rem;
+    box-sizing: border-box;
+}
+#page-profile textarea, #page-profile input {
+    width: 20rem;
+}
+#page-profile select, #page-profile .submit {
+    width: 22rem;
+}
+
+#page-profile #div-footer {
+    background: #7a7a7a;
+    padding: 3rem;
+    text-align: left;
+    font-size: 0.8rem;
+    color: #cecece;
 }

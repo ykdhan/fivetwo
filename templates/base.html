@@ -70,9 +70,12 @@
     </section>
     <section class="align--left align--vertical">
         <div id="profile" class="align--left">
-            <a href="{{ url_for('logout') }}">
-            <img alt="PROFILE" src="/static/img/profile.svg">
+            <a href="{{ url_for('profile') }}">
+            <img id="profile-picture" alt="PROFILE" src="/static/img/profile.svg">
             <div id="user-name" class="font--main font--500 align--middle">{{ current_user.name }}</div>
+            </a>
+            <a href="{{ url_for('logout') }}">
+            <img id="sign-out" alt="Sign Out" src="/static/img/power.svg">
             </a>
         </div>
     </section>

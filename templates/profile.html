@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}52CO{% endblock %}
+
+{% block content %}
+
+<div id="page-profile" class="align--center">
+
+    <div id="div-picture">
+        <h1>My Profile</h1>
+        <img alt="" id="preview-picture" class="box shadow" src="/static/img/profile.svg">
+    </div>
+    <div id="div-profile" class="">
+        <form method="POST">
+            {{ profile_form.csrf_token }}
+            <div class="row">{{ profile_form.name(class="",placeholder="Name") }}</div>
+            <div class="row">{{ profile_form.gender(class="") }}</div>
+            <div class="row">{{ profile_form.contact(placeholder="Phone (123-456-7890)", class="") }}</div>
+            <div class="row">{{ profile_form.birth(placeholder="Date of Birth (mm/dd/yyyy)", class="") }}</div>
+            {% if current_user.is_campus == 'YES' %}
+                {% if current_user.is_student == 'YES' %}
+                    <div class="row">{{ profile_form.major(placeholder="Major", class="") }}</div>
+                    <div class="row">{{ profile_form.year(class="") }}</div>
+                {% else %}
+                    <div class="row">{{ profile_form.department(placeholder="Department", class="") }}</div>
+                    <div class="row">{{ profile_form.position(placeholder="Position", class="") }}</div>
+                {% endif %}
+            {% endif %}
+            <div class="row">{{ profile_form.submit(class_='submit') }}</div>
+        </form>
+    </div>
+    <div id="div-footer">
+        &copy; 2017 FiveTwo Co. All rights reserved.
+    </div>
+</div>
+
+<script>
+
+
+function tab(evt, tabName) {
+
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tab");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" tab-now", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " tab-now";
+
+    if (tabName == 'tab-student') {
+        document.getElementById('is_student').value = 'YES';
+    } else if (tabName == 'tab-faculty') {
+        document.getElementById('is_student').value = 'NO';
+    }
+}
+
+
+</script>
+
+{% endblock %}

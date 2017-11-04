@@ -1,16 +1,17 @@
 DROP TABLE IF EXISTS user;
 CREATE TABLE user
 (
-  id             INTEGER PRIMARY KEY, /* random */
-  email          TEXT NOT NULL,
-  password       TEXT NOT NULL,
-  name           TEXT NOT NULL,
-  gender         TEXT NULL,
-  contact        TEXT NULL,
-  date_of_birth  DATE NULL,
-  is_campus      TEXT DEFAULT 'NO',
-  is_registered  TEXT DEFAULT 'NO',
-  created_at     DATETIME DEFAULT CURRENT_TIMESTAMP
+  id              INTEGER PRIMARY KEY, /* random */
+  email           TEXT NOT NULL,
+  password        TEXT NOT NULL,
+  name            TEXT NOT NULL,
+  gender          TEXT NULL,
+  contact         TEXT NULL,
+  date_of_birth   DATE NULL,
+  profile_picture TEXT DEFAULT 'NO',
+  is_campus       TEXT DEFAULT 'NO',
+  is_registered   TEXT DEFAULT 'NO',
+  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 

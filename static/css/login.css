@@ -76,189 +76,50 @@
 
 
 
-#page-login .tab-content {
+
+#page-sign-up .tabs {
+    box-sizing: border-box;
+    margin-top: 1rem;
+}
+#page-sign-up .tab {
+    box-sizing: border-box;
+    display: inline-block;
+    background: #fff;
+    border: 0.06rem solid #cecece;
+    border-radius: 0.25rem 0 0 0.25rem;
+    padding: 0.6rem 1rem;
+    margin: 0;
+    border-collapse: collapse;
+    background: none;
+    cursor: pointer;
+    width: 8.5rem;
+    font-size: 0.8rem;
+    color: #474747;
+    border-collapse: collapse;
+}
+#page-sign-up .tab:last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+#page-sign-up .tab:hover {
+
+}
+#page-sign-up .tab-now {
+    border: 0.06rem solid #E55A5A !important;
+    color: #E55A5A;
+}
+#page-sign-up .tab-now:hover {
+
+}
+#page-sign-up .tab-content {
     display: none;
     box-sizing: border-box;
     width: 100%;
-    margin: 0;
+    margin: 0 auto;
     text-align: center;
 }
-#page-login .tab-content-now {
+#page-sign-up .tab-content-now {
     display: block;
 }
-#page-login .tabs {
-    box-sizing: border-box;
-}
-#page-login .tab {
-    box-sizing: border-box;
-    display: inline-block;
-    padding: 0.7rem;
-    border: 0.5px solid transparent;
-    border-bottom: 0;
-    background: none;
-    color: #525252;
-    cursor: pointer;
-    width: 14.5rem;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-}
-#page-login .tab:hover {
-    color: #252525;
-}
-#page-login .tab-now {
-    border: 0.5px solid #9b9b9b;
-    border-bottom: 0;
-    background: #fff;
-    color: #252525;
-}
-#page-login .tab-content input[type='date'] {
-    width: 14.5rem !important;
-    box-sizing: border-box;
-    border: 0.5px solid #9b9b9b;
-    border-right: 0;
-    border-left: 0;
-}
-#page-login .tab-content #start-date {
-    border-left: 0.5px solid #9b9b9b;
-}
-#page-login .tab-content #end-date {
-    border-right: 0.5px solid #9b9b9b;
-    text-align: right;
-}
-#page-login .tab-content ul {
-    width: 29rem !important;
-    box-sizing: border-box;
-    -webkit-margin-before: 0;
-    -webkit-margin-after: 0;
-    -webkit-margin-start: 0;
-    -webkit-margin-end: 0;
-    -webkit-padding-start: 0;
-}
-#page-login .tab-content li {
-    width: 4.14rem !important;
-    border: 0.5px solid #9b9b9b;
-    border-right: 0;
-    padding-top: 0.79rem;
-    padding-bottom: 0.8rem;
-    box-sizing: border-box;
-    display: inline-block;
-    background: #fff;
-    color: #525252;
-    cursor: pointer;
-    transition: background 0s;
-}
-#page-login .tab-content li:last-child {
-    border-right: 0.5px solid #9b9b9b;
-    width: 4.161rem !important;
-}
-#page-login .tab-content li:hover {
-    background: #f2f2f2;
-}
-#page-login .tab-content li.selected {
-    background: #F4C52F;
-    color: #252525;
-}
-#page-login .tab-content li.selected:hover {
-    background: #eee;
-}
-#page-login #tab-time {
-    margin-top: -0.05rem;
-}
-#page-login #description {
-    height: 6rem;
-}
-#page-login input[type='time'] {
-    width: 14.5rem;
-    border: 0.5px solid #9b9b9b;
-    border-top: 0;
-    border-right: 0;
-    border-left: 0;
-    padding: 1rem;
-    padding-top: 0.6rem;
-    padding-bottom: 0.7rem;
-    box-sizing: border-box;
-    display: inline-block;
-    background: #fff;
-    color: #525252;
-    cursor: pointer;
-}
-#page-login #start-time {
-    border-left: 0.5px solid #9b9b9b;
-}
-#page-login #end-time {
-    border-right: 0.5px solid #9b9b9b;
-    text-align: right;
-}
-#page-login #job-wage {
-    text-align: right;
-    width: 19rem;
-    box-sizing: border-box;
-}
-#page-login .sign {
-    position: absolute;
-    color: #525252;
-    margin-top: 0.6rem;
-    margin-left: 1rem;
-}
-#page-login .arrow {
-    width: 0.7rem;
-    height: auto;
-    position: absolute;
-    margin-left: 8.5rem;
+#page-sign-up .submit {
     margin-top: 1rem;
-}
-#page-login select {
-    width: 10rem;
-    cursor: pointer;
-    border-left: 0;
-}
-#page-login .question {
-    padding-bottom: 1rem;
-    text-align: left;
-}
-#page-login .add {
-    width: 4rem;
-    font-size: 1.1rem;
-    font-weight: 500;
-    padding-top: 0.5rem;
-    padding-bottom: 0.65rem;
-    text-align: center;
-    background: #fff;
-    border: 0.5px solid #9B9B9B;
-    border-left: 0;
-    margin: 0;
-    display: inline-block;
-    cursor: pointer;
-}
-#page-login .add:hover {
-    background: #f2f2f2;
-}
-#page-login #question2, #page-login #question3 {
-    margin-top: -0.05rem;
-}
-#page-login #job-tags {
-    display: inline-block;
-    min-height: 2rem;
-    background: #fff;
-    width: 29rem;
-    border: 0.5px solid #9b9b9b;
-    border-top: 0;
-    text-align: left;
-    margin-top: -0.01rem;
-}
-#page-login #job-tag {
-    padding-left: 2rem;
-    width: 26rem;
-}
-#page-login .job-tag-delete {
-    display: inline-block;
-    font-size: 0.8rem;
-    color: #aaa;
-    border-radius: 7px;
-    padding: 0.3rem 0.5rem 0.4rem 0.5rem;
-    margin: 0.3rem;
-    cursor: pointer;
-}
-#page-login .job-tag-delete:hover {
-    color: #F4C52F;
 }

@@ -28,8 +28,8 @@
 
 <div id="jobs" class="align--left">
     {% for job in jobs %}<div class="div-job">
-    <a href="/job/{{ job['id'] }}">
     <div class="job shadow">
+        <a href="/job/{{ job['id'] }}">
         <div class="profile align--left">
             <div class="picture align--middle"></div>
             <div class="info align--middle">
@@ -99,15 +99,25 @@
         <div class="align--center">
             <img class="button" alt="" src="/static/img/card-button.svg">
         </div>
-    </div></a>
+    </a></div>
     </div>{% else %}
         <div>No jobs available.</div>
     {% endfor %}
 </div>
 
 <script>
-    document.getElementById('menu-search').style.color = '#E55A5A';
-    document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg">Search Job';
+document.getElementById('menu-search').style.color = '#E55A5A';
+document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg">Search Job';
+
+$('#input-search').keydown(function(event){
+    if(event.keyCode == 13) {
+        event.preventDefault();
+
+
+
+        return false;
+    }
+});
 </script>
 
 {% endblock %}

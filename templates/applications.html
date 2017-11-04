@@ -101,7 +101,7 @@
 
         </div>
         {% else %}
-        <div><a href="{{ url_for('index') }}">Go and apply for jobs!</a></div>
+        <div class="empty-list">Go and <a class="link--white" href="{{ url_for('index') }}">apply</a> for jobs!</div>
         {% endfor %}
     </div>
 

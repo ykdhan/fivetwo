@@ -35,12 +35,13 @@ body {
 }
 
 a {
+    outline: none;
 	text-decoration: none;
 	color: #474747;
+    font-weight: 600;
     cursor: pointer;
 }
 a:hover{
-	text-decoration: none;
 	color: #474747;
 }
 
@@ -186,6 +187,15 @@ img {
     cursor: default;
 }
 
+.link--white {
+    color: #fff;
+}
+.link--white:hover {
+	text-decoration: underline;
+    color: #fff;
+}
+
+
 
 header {
     background: #fff;
@@ -208,18 +218,25 @@ header #logo {
     margin-bottom: 1.5rem;
 }
 header #profile {
-
+    vertical-align: middle;
 }
-header #profile img {
+header #profile-picture {
     width: 2rem;
     height: auto;
+    vertical-align: middle;
     margin-right: 0.4rem;
 }
 header #user-name {
     display: inline-block;
     font-size: 0.85rem;
 }
-
+header #sign-out {
+    width: 0.9rem !important;
+    height: auto;
+    float: right;
+    vertical-align: middle;
+    margin-top: 0.5rem;
+}
 
 
 #page {
@@ -318,8 +335,8 @@ header #user-name {
     cursor: pointer;
 }
 .job:hover {
-    transform: scale(1.03);
-    transition: transform 0.1s ease-out;
+    //transform: scale(1.03);
+    //transition: transform 0.1s ease-out;
     z-index: 2;
 }
 .job .profile {
@@ -352,6 +369,7 @@ header #user-name {
     padding-bottom: 0.3rem;
     font-weight: 600;
     overflow-x: hidden;
+    white-space: nowrap;
 }
 .job .info {
 
@@ -399,6 +417,7 @@ header #user-name {
     padding: 0.8rem;
     margin-top: 1.2rem;
     overflow-x: hidden;
+    white-space: nowrap;
     text-align: left;
     min-height: 1.1rem;
 }

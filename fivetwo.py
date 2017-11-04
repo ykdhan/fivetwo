@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, redirect, url_for, request, session
+from flask import Flask, render_template, flash, redirect, url_for, request, session, jsonify
 from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, IntegerField, PasswordField, BooleanField, HiddenField, TextAreaField
 from wtforms.validators import Email, Length, NumberRange, DataRequired, InputRequired, EqualTo, AnyOf, Regexp, Optional
 from flask_wtf import FlaskForm, validators
@@ -64,6 +64,8 @@ class User(object):
         self.id = db.user_info(email)['id']
         self.is_registered = db.user_info(email)['is_registered']
         self.is_campus = db.user_info(email)['is_campus']
+        if self.is_campus == 'YES':
+            self.is_student = db.user_info(email)['is_student']
         self.is_authenticated = True
         self.is_active = True
         self.is_anonymous = False
@@ -211,6 +213,74 @@ def index():
         job['tags'] = tags
         outputs.append(job)
     return render_template('index.html', jobs=outputs)
+
+
+@app.route('/search')
+def search():
+    try:
+        jobs = db.search_jobs(request.args.get('search'))
+        outputs = []
+        for j in jobs:
+            job = {}
+            job['id'] = j['id']
+            job['user'] = {}
+            job['user']['id'] = j['user_id']
+            job['user']['name'] = db.user(j['user_id'])['name']
+            job['title'] = j['title']
+            job['date'] = j['created_at']
+            job['description'] = j['description']
+            job['term'] = j['term']
+
+            if job['term'] == 'LONG':
+                days = str(j['day']).split("/")
+                job['day'] = days
+            else:
+                start_month = datetime.datetime.strptime(j['start_date'], '%Y-%m-%d').strftime("%b")
+                start_day = int(datetime.datetime.strptime(j['start_date'], '%Y-%m-%d').strftime("%d"))
+                start_year = datetime.datetime.strptime(j['start_date'], '%Y-%m-%d').strftime("%y")
+                end_month = datetime.datetime.strptime(j['end_date'], '%Y-%m-%d').strftime("%b")
+                end_day = int(datetime.datetime.strptime(j['end_date'], '%Y-%m-%d').strftime("%d"))
+                end_year = datetime.datetime.strptime(j['end_date'], '%Y-%m-%d').strftime("%y")
+                job['start_date'] = start_month + " " + str(start_day) + ", " + start_year
+                job['end_date'] = end_month + " " + str(end_day) + ", " + end_year
+
+            start_hour = int(datetime.datetime.strptime(j['start_time'], '%H:%M').strftime("%H"))
+            start_minute = datetime.datetime.strptime(j['start_time'], '%H:%M').strftime("%M")
+            start_ampm = "AM"
+            end_hour = int(datetime.datetime.strptime(j['end_time'], '%H:%M').strftime("%H"))
+            end_minute = datetime.datetime.strptime(j['end_time'], '%H:%M').strftime("%M")
+            end_ampm = "AM"
+
+            if start_hour == 12:
+                start_ampm = "PM"
+            elif start_hour > 12:
+                start_hour -= 12
+                start_ampm = "PM"
+            if end_hour == 12:
+                end_ampm = "PM"
+            elif end_hour > 12:
+                end_hour -= 12
+                end_ampm = "PM"
+
+            if start_ampm == end_ampm:
+                job['start_time'] = str(start_hour) + ":" + start_minute
+                job['end_time'] = str(end_hour) + ":" + end_minute + " " + end_ampm
+            else:
+                job['start_time'] = str(start_hour) + ":" + start_minute + " " + start_ampm
+                job['end_time'] = str(end_hour) + ":" + end_minute + " " + end_ampm
+
+            job['money'] = str(j['money'])
+            job['every'] = j['every']
+
+            tags = db.job_tags(job['id'])
+
+            job['tags'] = tags
+            outputs.append(job)
+
+        return jsonify(jobs=outputs)
+    except ValueError:
+        return str(ValueError)
+
 
 
 @app.route('/job/<job_id>', methods=["GET", "POST"])
@@ -500,33 +570,89 @@ def sign_up():
         signup_form = SignUpMoreFormCampus()
         signup_form.name.data = current_user.name
         is_campus = True
-        if user['is_student'] == 'YES':
-            is_student = True
-        else:
-            is_student = False
     else:
         signup_form = SignUpMoreForm()
         is_campus = False
-        is_student = False
 
     if signup_form.is_submitted():
         if is_campus:
-            if is_student:
-                rowcount = db.sign_up_more(current_user.id, signup_form.name.data, signup_form.gender.data, signup_form.contact.data,
-                                           signup_form.birth.data, signup_form.major.data, signup_form.year.data, None, None)
+            if signup_form.is_student.data == 'NO':
+                is_student = False
             else:
-                rowcount = db.sign_up_more(current_user.id, signup_form.name.data, signup_form.gender.data, signup_form.contact.data,
-                                           signup_form.birth.data, None, None, signup_form.department.data,
+                is_student = True
+
+            if is_student:
+                rowcount = db.sign_up_more(current_user.id, 'YES',
+                                           signup_form.name.data,
+                                           signup_form.gender.data,
+                                           signup_form.contact.data,
+                                           signup_form.birth.data,
+                                           signup_form.major.data,
+                                           signup_form.year.data,
+                                           None,
+                                           None)
+            else:
+                rowcount = db.sign_up_more(current_user.id, 'NO',
+                                           signup_form.name.data,
+                                           signup_form.gender.data,
+                                           signup_form.contact.data,
+                                           signup_form.birth.data,
+                                           None,
+                                           None,
+                                           signup_form.department.data,
                                            signup_form.position.data)
         else:
-            rowcount = db.sign_up_more(current_user.id, None, signup_form.gender.data, signup_form.contact.data, signup_form.birth.data,
+            rowcount = db.sign_up_more(current_user.id, None,
+                                       None,
+                                       signup_form.gender.data,
+                                       signup_form.contact.data,
+                                       signup_form.birth.data,
                                        None, None, None, None)
         if rowcount == 1:
             return redirect(url_for('index'))
         else:
             flash("Error: Cannot sign up.")
 
-    return render_template('sign-up.html', signup_form=signup_form, is_campus=is_campus, is_student=is_student)
+    return render_template('sign-up.html', signup_form=signup_form, is_campus=is_campus)
+
+
+@app.route('/profile', methods=["GET", "POST"])
+def profile():
+    user = db.user(current_user.id)
+    if user['is_campus'] == 'NO':
+        profile_form = ProfileForm(name=user['name'], gender=user['gender'], contact=user['contact'],
+                               birth=datetime.datetime.strptime(user['date_of_birth'], '%Y-%m-%d').strftime("%m/%d/%Y"))
+    else:
+        if user['is_student'] == 'YES':
+            profile_form = ProfileForm(name=user['name'], gender=user['gender'], contact=user['contact'],
+                                       birth=datetime.datetime.strptime(user['date_of_birth'], '%Y-%m-%d').strftime(
+                                           "%m/%d/%Y"), major=user['major'], year=user['class_year'])
+        else:
+            profile_form = ProfileForm(name=user['name'], gender=user['gender'], contact=user['contact'],
+                                       birth=datetime.datetime.strptime(user['date_of_birth'], '%Y-%m-%d').strftime(
+                                           "%m/%d/%Y"), department=user['department'], position=user['position'])
+
+    if profile_form.validate_on_submit():
+        if current_user.is_campus == 'YES':
+            if current_user.is_student == 'YES':
+                rowcount = db.update_profile(current_user.id, 'YES', profile_form.name.data, profile_form.gender.data,
+                                         profile_form.contact.data, profile_form.birth.data, profile_form.major.data, profile_form.year.data,
+                                         None, None)
+            else:
+                rowcount = db.update_profile(current_user.id, 'NO', profile_form.name.data, profile_form.gender.data,
+                                             profile_form.contact.data, profile_form.birth.data,
+                                             None, None,
+                                             profile_form.department.data, profile_form.position.data)
+        else:
+            rowcount = db.update_profile(current_user.id, None, profile_form.name.data, profile_form.gender.data,
+                                         profile_form.contact.data, profile_form.birth.data, None, None, None, None)
+
+        if rowcount == 1:
+            return redirect(url_for('profile'))
+        else:
+            flash("Error: Cannot update profile.")
+
+    return render_template('profile.html', profile_form=profile_form)
 
 
 class LoginForm(FlaskForm):
@@ -546,20 +672,34 @@ class SignUpForm(FlaskForm):
 class SignUpMoreForm(FlaskForm):
     gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
     contact = StringField('Email Address')
-    birth = StringField('Email Address')
+    birth = StringField('Date of Birth')
     signup_submit = SubmitField('Sign Up')
 
 
 class SignUpMoreFormCampus(FlaskForm):
+    is_student = HiddenField('Is Student')
     name = StringField('Name')
     gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
     contact = StringField('Email Address')
-    birth = StringField('Email Address')
+    birth = StringField('Date of Birth')
     major = StringField('Major')
     year = SelectField('Class Year', choices=[('Freshman', 'Freshman'), ('Sophomore', 'Sophomore'), ('Junior', 'Junior'), ('Senior', 'Senior')])
     department = StringField('Department')
     position = StringField('Position')
     signup_submit = SubmitField('Sign Up')
+
+
+class ProfileForm(FlaskForm):
+    picture = HiddenField('Profile Picture')
+    name = StringField('Name')
+    gender = SelectField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
+    contact = StringField('Email Address')
+    birth = StringField('Date of Birth')
+    major = StringField('Major')
+    year = SelectField('Class Year', choices=[('Freshman', 'Freshman'), ('Sophomore', 'Sophomore'), ('Junior', 'Junior'), ('Senior', 'Senior')])
+    department = StringField('Department')
+    position = StringField('Position')
+    submit = SubmitField('Update Profile')
 
 
 class PostForm(FlaskForm):
