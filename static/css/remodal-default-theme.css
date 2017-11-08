@@ -42,13 +42,15 @@
   width: 100%;
 
   transform: translate3d(0, 0, 0);
-  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;
-  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;
-  border: 0.5px solid #9b9b9b;
-  border-radius: 0;
-  color: #525252;
-  background: #fcfcfc;
+    -webkit-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    -moz-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+
+  padding: 1.5rem;
+
+  border-radius: 0.5rem;
+  color: #474747;
+  background: #fff;
 }
 
 .remodal.remodal-is-opening,
@@ -75,46 +77,22 @@
 /* Close button */
 
 .remodal-close {
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  display: block;
-  overflow: visible;
-
-  width: 2rem;
-  height: 2rem;
+  display: inline-block;
   margin: 0;
   padding: 0;
-
   cursor: pointer;
   transition: color 0.2s;
-  text-decoration: none;
-
-  color: #fff;
   border: 0;
-  outline: 0;
+
+  color: #bababa;
   background: transparent;
+  margin-top: 1rem;
+  font-size: 0.9rem;
 }
 
 .remodal-close:hover,
 .remodal-close:focus {
-  color: #444;
-}
-
-.remodal-close:before {
-  font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif !important;
-  font-size: 2rem;
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: block;
-    width: 2rem;
-    padding-right: 0.8rem;
-    padding-top: 0.25rem;
-
-  content: "\00d7";
-  text-align: right;
+  color: #474747;
 }
 
 /* Dialog buttons */
@@ -226,7 +204,7 @@
 
 @media only screen and (min-width: 640px) {
   .remodal {
-    max-width: 25rem;
+    max-width: 21rem;
   }
 }
 
@@ -238,5 +216,5 @@
 }
 
 .lt-ie9 .remodal {
-  width: 25rem;
+  width: 21rem;
 }

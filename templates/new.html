@@ -10,7 +10,11 @@
 
         <div class="job shadow">
             <div class="profile align--left">
+                {% if profile_picture != 'NO' %}
+                <div class="picture align--middle" style="background-image: url('/static/profiles/{{ profile_picture }}');"></div>
+                {% else %}
                 <div class="picture align--middle"></div>
+                {% endif %}
                 <div class="info align--middle">
                     <div class="user font--main font--black align--left">{{ current_user.name }}</div>
                     <div class="date font--main align--left">{{ today }}</div>
@@ -46,7 +50,7 @@
         <form method="POST">
             {{ form.csrf_token }}
             <div class="row">{{ form.title(placeholder="Title", class="") }}</div>
-            <div class="row">{{ form.description(placeholder="Description", class="", rows=5) }}</div>
+            <div class="row">{{ form.description(placeholder="Description", class="", rows="6") }}</div>
             <div class="row">
                 <div class="tabs">
                     <div class="tab" onclick="tab(event, 'tab-short')">Short Term</div><div class="tab tab-now" onclick="tab(event, 'tab-long')">Long Term</div>

@@ -3,6 +3,7 @@ from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, 
 from wtforms.validators import Email, Length, NumberRange, DataRequired, InputRequired, EqualTo, AnyOf, Regexp, Optional
 from flask_wtf import FlaskForm, validators
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_hashing import Hashing
 import datetime
 from flask_mail import Mail, Message
 import string, random
@@ -10,16 +11,19 @@ import re
 from flask_cas import CAS
 from flask_cas import login
 from flask_cas import logout
+import os
 
 import db
 
 app = Flask(__name__)
-mail = Mail(app)
+hashing = Hashing(app)
 
 cas = CAS(app, '/cas')
 app.config['CAS_SERVER'] = 'https://sso.taylor.edu/'
 app.config['CAS_AFTER_LOGIN'] = 'cas'
 
+UPLOAD_FOLDER = os.path.basename('static/uploads/')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.config.update(
     DEBUG=True,
@@ -28,8 +32,15 @@ app.config.update(
     MAIL_PORT=465,
     MAIL_USE_SSL=True,
     MAIL_USERNAME='fivetwo@mail.com',
-    MAIL_PASSWORD='Five&Two52'
+    MAIL_PASSWORD='FiveTwo&52'
 )
+mail = Mail(app)
+def send_email(recipients, title, text_body, html_body):
+    msg = Message(title, sender='fivetwo@mail.com', recipients=recipients)
+    msg.body = text_body
+    msg.html = html_body
+    mail.send(msg)
+
 app.config['SECRET_KEY'] = '52CO Key'
 app.config['WTF_CSRF_ENABLED'] = False
 
@@ -51,8 +62,17 @@ login_mgr = LoginManager(app)
 # authenticates a user by taking their login and password and checking it against the user table.
 def authenticate(email, password):
     for user in db.users():
-        if user['is_campus'] == 'NO' and email == user['email'] and password == user['password']:
-            return email
+        if user['is_campus'] == 'NO' and email == user['email']:
+            if hashing.check_value(user['password'], password, salt='Five&Two52'):
+                return email
+    return None
+
+
+def authenticate_id(user_id):
+    for user in db.users():
+        if user['is_campus'] == 'NO' and user_id == user['id']:
+            print('user')
+            return user['email']
     return None
 
 
@@ -62,6 +82,7 @@ class User(object):
         self.email = email
         self.name = db.user_info(email)['name']
         self.id = db.user_info(email)['id']
+        self.picture = db.user_info(email)['profile_picture']
         self.is_registered = db.user_info(email)['is_registered']
         self.is_campus = db.user_info(email)['is_campus']
         if self.is_campus == 'YES':
@@ -94,22 +115,58 @@ def login():
         email = login_form.email.data
         password = login_form.password.data
         if authenticate(email, password):
-            # Credentials authenticated.
             user = User(email)
             login_user(user)
             return redirect(url_for('index'))
-        #else:
-            #flash('Invalid username or password')
+        else:
+            flash('Invalid username or password')
     if signup_form.validate_on_submit():
         if signup_form.password.data == signup_form.cpassword.data:
-            rowcount = db.sign_up(signup_form.name.data, signup_form.email.data, signup_form.password.data, 'NO')
-            if rowcount == 1:
-                if authenticate(signup_form.email.data, signup_form.password.data):
-                    user = User(email)
-                    login_user(user)
-                    return redirect(url_for('index'))
+            pw = hashing.hash_value(signup_form.password.data, salt='Five&Two52')
+            rowcount = db.sign_up(signup_form.name.data, signup_form.email.data, pw, 'NO')
+            if rowcount != 1:
+                title = "Please verify your email!"
+                message = "Dear " + signup_form.name.data + ",\r\n\r\nThank you for registering!"+\
+                          "\r\nIn order to continue, please verify your email by clicking the link below." + \
+                          "\r\n\r\nhttp://127.0.0.1:5000/verify/" + rowcount + \
+                          "\r\n\r\nSincerely," + "\r\nFiveTwo Co."
+                html = '''
+                <!DOCTYPE html><html lang="en-us"><head>
+                <meta charset="utf-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+                <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500" rel="stylesheet">
+                <title></title>
+                <style>
+                body { width: 100%; height: 100%; background: none; padding: 0; margin: 0;
+                    font-size: 0.9rem; font-family: 'Quicksand', sans-serif; font-weight: 500;
+                    color: #474747; text-align: center; line-height: 1.5; }
+                p { margin: 0; padding: 0; margin-bottom: 0.5rem; text-align: left; }
+                button {
+                    font-size: 0.9rem; font-family: 'Questrial', sans-serif;font-weight: 500;
+                    width: auto; cursor: pointer; background: #fff;
+                    border: 0.06rem solid #E55A5A; border-radius: 0.25rem; color: #E55A5A;
+                    padding: 0.6rem 1rem; margin: 0; margin-bottom: 1rem; }
+                button:hover { background: #E55A5A; color: #fff; }
+                #frame { width: 100%; max-width: 400px; margin: 3rem auto; }
+                #logo { width: 3.6rem; height: auto; }
+                #dear { margin-top: 2.5rem; margin-bottom: 2.5rem; } 
+                #end-message { margin-top: 2.5rem;}        
+                #note { margin-top: 2rem; color: #cecece; font-size: 0.7rem; }
+                </style>
+                </head><body><div id="frame"><img id="logo" alt="FIVETWO" src="https://fivetwo.co/static/img/fivetwo.svg">
+                <p id="dear">Greetings from FiveTwo,</p><p>Thank you for verifying your e-mail address.<br>Please click the button below to complete the process.</p>
+                <p><a href="http://127.0.0.1:5000/verify/'''+rowcount+''''"><button>Verify Email</button></a></p>
+                <p>If you did not request to have your email verified, you can safely ignore this email. Rest assured your customer account is safe.</p>
+                <p>With encryption, FiveTwo secures all user information and personal data.</p>
+                <p>Thanks for visiting FiveTwo!</p>
+                <p id="note">Note: When you verify your email address on this account, you'll be locked out all of other accounts associated with that email address. It won't be possible to sign into those other accounts without also verifying ownership of that email address.</p>
+                </div></body></html>
+                '''
+                send_email([signup_form.email.data], title, message, html)
+                return redirect(url_for('welcome', user_id=rowcount))
             else:
-                flash("Error: Cannot post new job.")
+                flash("Error: Cannot sign up.")
         else:
             flash("Error: Confirm password.")
     return render_template('login.html', login_form=login_form, signup_form=signup_form, login=True)
@@ -125,6 +182,13 @@ def logout():
     else:
         logout_user()
         return redirect(url_for('index'))
+
+
+@app.route('/welcome/<user_id>', methods=['GET', 'POST'])
+def welcome(user_id):
+    name = db.user(user_id)['name']
+    email = db.user(user_id)['email']
+    return render_template('welcome.html', name=name, email=email, not_registered=True)
 
 
 @app.route('/cas')
@@ -162,6 +226,7 @@ def index():
         job['user'] = {}
         job['user']['id'] = j['user_id']
         job['user']['name'] = db.user(j['user_id'])['name']
+        job['user']['picture'] = db.user(j['user_id'])['profile_picture']
         job['title'] = j['title']
         job['date'] = j['created_at']
         job['description'] = j['description']
@@ -207,6 +272,10 @@ def index():
 
         job['money'] = str(j['money'])
         job['every'] = j['every']
+        create_day = int(datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d'))
+        create_month = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%b')
+        create_year = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%Y')
+        job['created_at'] = create_month + " " + str(create_day) + ", " + create_year
 
         tags = db.job_tags(job['id'])
 
@@ -282,10 +351,12 @@ def search():
         return str(ValueError)
 
 
-
 @app.route('/job/<job_id>', methods=["GET", "POST"])
 def job(job_id):
     today = datetime.datetime.today()
+
+    applied = db.job_applied(job_id,current_user.id)
+    print(applied)
 
     j = db.job(job_id)
 
@@ -294,6 +365,7 @@ def job(job_id):
     job['user'] = {}
     job['user']['id'] = j['user_id']
     job['user']['name'] = db.user(j['user_id'])['name']
+    job['user']['picture'] = db.user(j['user_id'])['profile_picture']
     job['title'] = j['title']
     job['date'] = j['created_at']
     job['description'] = j['description']
@@ -339,6 +411,10 @@ def job(job_id):
 
     job['money'] = str(j['money'])
     job['every'] = j['every']
+    create_day = int(datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d'))
+    create_month = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%b')
+    create_year = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%Y')
+    job['created_at'] = create_month + " " + str(create_day) + ", " + create_year
 
     tags = db.job_tags(job_id)
     questions = db.job_questions(job_id)
@@ -350,13 +426,17 @@ def job(job_id):
 
     if job_form.validate_on_submit():
         answers = []
-        if job_form.answer1.data is not None and job_form.answer1.data != "":
+        print("1: "+job_form.answer1.data)
+        print("2: "+job_form.answer2.data)
+        print("3: "+job_form.answer2.data)
+        if job_form.answer1.data != "":
             answers.append(job_form.answer1.data)
-        if job_form.answer2.data is not None and job_form.answer2.data != "":
+        if job_form.answer2.data != "":
             answers.append(job_form.answer2.data)
-        if job_form.answer3.data is not None and job_form.answer3.data != "":
+        if job_form.answer3.data != "":
             answers.append(job_form.answer3.data)
 
+        print(answers)
         rowcount = db.apply_job(current_user.id, job_id, answers)
 
         if rowcount == 1:
@@ -364,11 +444,16 @@ def job(job_id):
         else:
             flash("Error: Cannot apply.")
 
-    return render_template('job.html', job=job, form=job_form, today=today)
+    return render_template('job.html', job=job, form=job_form, today=today, applied=applied)
 
 
 @app.route('/new', methods=["GET", "POST"])
 def new():
+    day = int(datetime.datetime.today().strftime('%d'))
+    month = datetime.datetime.today().strftime('%b')
+    year = datetime.datetime.today().strftime('%Y')
+
+    today = month+" "+str(day)+", "+year
 
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
@@ -413,7 +498,7 @@ def new():
         else:
             flash("Error: Cannot post new job.")
 
-    return render_template('new.html', form=post_form)
+    return render_template('new.html', form=post_form, profile_picture=current_user.picture, today=today)
 
 
 @app.route('/posts', methods=["GET", "POST"])
@@ -494,6 +579,7 @@ def applications():
         job['user'] = {}
         job['user']['id'] = j['user_id']
         job['user']['name'] = db.user(j['user_id'])['name']
+        job['user']['picture'] = db.user(j['user_id'])['profile_picture']
         job['title'] = j['title']
         job['date'] = j['created_at']
         job['description'] = j['description']
@@ -539,6 +625,10 @@ def applications():
 
         job['money'] = str(j['money'])
         job['every'] = j['every']
+        create_day = int(datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d'))
+        create_month = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%b')
+        create_year = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%Y')
+        job['created_at'] = create_month + " " + str(create_day) + ", " + create_year
 
         tags = db.job_tags(j['id'])
 
@@ -549,10 +639,10 @@ def applications():
         for i in db.job_questions(j['id']):
             q = {}
             q['question'] = i['question']
-            q['answer'] = db.job_answers(j['id'])[num]['answer']
+            q['answer'] = db.job_answers(a['id'])[num]['answer']
             questions.append(q)
             num += 1
-        apply['questions'] = db.job_questions(j['id'])
+        apply['questions'] = questions
         apply['job'] = job
         apply['date'] = datetime.datetime.strptime(a['created_at'], '%Y-%m-%d %H:%M:%S').strftime("%b %d, %Y")
 
@@ -561,8 +651,14 @@ def applications():
     return render_template('applications.html', applications=outputs)
 
 
+@app.route('/board', methods=["GET", "POST"])
+def board():
+    return render_template('board.html')
+
 @app.route('/sign-up', methods=["GET", "POST"])
 def sign_up():
+    if current_user is None:
+        return redirect(url_for('login'))
     user = db.user(current_user.id)
     if db.user(current_user.id) is None:
         return redirect(url_for('index'))
@@ -616,43 +712,94 @@ def sign_up():
     return render_template('sign-up.html', signup_form=signup_form, is_campus=is_campus)
 
 
+@app.route('/verify/<user_id>', methods=["GET", "POST"])
+def verify(user_id):
+
+    # check if logged in
+
+    signup_form = SignUpMoreForm()
+    if signup_form.is_submitted():
+        rowcount = db.sign_up_more(user_id, None,
+                                   None,
+                                   signup_form.gender.data,
+                                   signup_form.contact.data,
+                                   signup_form.birth.data,
+                                   None, None, None, None)
+        if rowcount == 1:
+            if authenticate_id(user_id):
+                user = User(authenticate_id(user_id))
+                login_user(user)
+                return redirect(url_for('index'))
+            flash("Error: Cannot authenticate.")
+        else:
+            flash("Error: Cannot verify.")
+
+    return render_template('verify.html', signup_form=signup_form)
+
+
 @app.route('/profile', methods=["GET", "POST"])
 def profile():
     user = db.user(current_user.id)
+    profile_picture = user['profile_picture']
+    if user['introduction'] is None:
+        introduction = ""
+    else:
+        introduction = user['introduction']
     if user['is_campus'] == 'NO':
         profile_form = ProfileForm(name=user['name'], gender=user['gender'], contact=user['contact'],
-                               birth=datetime.datetime.strptime(user['date_of_birth'], '%Y-%m-%d').strftime("%m/%d/%Y"))
+                               birth=datetime.datetime.strptime(user['date_of_birth'], '%Y-%m-%d').strftime("%m/%d/%Y"),
+                                   introduction=introduction)
     else:
         if user['is_student'] == 'YES':
             profile_form = ProfileForm(name=user['name'], gender=user['gender'], contact=user['contact'],
                                        birth=datetime.datetime.strptime(user['date_of_birth'], '%Y-%m-%d').strftime(
-                                           "%m/%d/%Y"), major=user['major'], year=user['class_year'])
+                                           "%m/%d/%Y"), major=user['major'], year=user['class_year'],
+                                       introduction=introduction)
         else:
             profile_form = ProfileForm(name=user['name'], gender=user['gender'], contact=user['contact'],
                                        birth=datetime.datetime.strptime(user['date_of_birth'], '%Y-%m-%d').strftime(
-                                           "%m/%d/%Y"), department=user['department'], position=user['position'])
+                                           "%m/%d/%Y"), department=user['department'], position=user['position'],
+                                       introduction=introduction)
 
     if profile_form.validate_on_submit():
         if current_user.is_campus == 'YES':
             if current_user.is_student == 'YES':
                 rowcount = db.update_profile(current_user.id, 'YES', profile_form.name.data, profile_form.gender.data,
                                          profile_form.contact.data, profile_form.birth.data, profile_form.major.data, profile_form.year.data,
-                                         None, None)
+                                         None, None, profile_form.introduction.data)
             else:
                 rowcount = db.update_profile(current_user.id, 'NO', profile_form.name.data, profile_form.gender.data,
                                              profile_form.contact.data, profile_form.birth.data,
                                              None, None,
-                                             profile_form.department.data, profile_form.position.data)
+                                             profile_form.department.data, profile_form.position.data,
+                                             profile_form.introduction.data)
         else:
             rowcount = db.update_profile(current_user.id, None, profile_form.name.data, profile_form.gender.data,
-                                         profile_form.contact.data, profile_form.birth.data, None, None, None, None)
+                                         profile_form.contact.data, profile_form.birth.data, None, None, None, None,
+                                         profile_form.introduction.data)
 
         if rowcount == 1:
             return redirect(url_for('profile'))
         else:
             flash("Error: Cannot update profile.")
 
-    return render_template('profile.html', profile_form=profile_form)
+    return render_template('profile.html', profile_form=profile_form, profile_picture=profile_picture)
+
+
+@app.route('/upload-profile', methods=['POST'])
+def upload_profile():
+    id = ""
+    for i in range(15):
+        id = id + str(random.randint(0, 9))
+    file = request.files['input-image']
+    name = id+'.'+file.filename.split('.')[-1]
+    print(name)
+    f = os.path.join('static\profiles', name)
+    print(f)
+    file.save(f)
+    db.upload_profile(current_user.id, name)
+    data = 1
+    return jsonify(data)
 
 
 class LoginForm(FlaskForm):
@@ -699,6 +846,7 @@ class ProfileForm(FlaskForm):
     year = SelectField('Class Year', choices=[('Freshman', 'Freshman'), ('Sophomore', 'Sophomore'), ('Junior', 'Junior'), ('Senior', 'Senior')])
     department = StringField('Department')
     position = StringField('Position')
+    introduction = TextAreaField('Introduction')
     submit = SubmitField('Update Profile')
 
 
@@ -723,9 +871,9 @@ class PostForm(FlaskForm):
 
 
 class JobForm(FlaskForm):
-    answer1 = HiddenField('Answer 1')
-    answer2 = HiddenField('Answer 2')
-    answer3 = HiddenField('Answer 3')
+    answer1 = TextAreaField('Answer 1')
+    answer2 = TextAreaField('Answer 2')
+    answer3 = TextAreaField('Answer 3')
     submit = SubmitField('Apply')
 
 

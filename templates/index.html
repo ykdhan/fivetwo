@@ -19,22 +19,21 @@
         <option>Long</option>
         <option>Short</option>
     </select><img class="icon" alt="" src="/static/img/icon-arrow-down.svg">
-    <select>
-        <option selected>Date posted</option>
-        <option>Date of work<i class="fa fa-arrow-up" aria-hidden="true"></i></option>
-        <option>Wage<i class="fa fa-arrow-down" aria-hidden="true"></i></option>
-    </select><img class="icon" alt="" src="/static/img/icon-arrow-down.svg">
 </div>
 
 <div id="jobs" class="align--left">
     {% for job in jobs %}<div class="div-job">
-    <div class="job shadow">
+    <div class="job shadow hover-small">
         <a href="/job/{{ job['id'] }}">
         <div class="profile align--left">
+            {% if job['user']['picture'] != 'NO' %}
+            <div class="picture align--middle" style="background-image: url('/static/profiles/{{ job['user']['picture'] }}');"></div>
+            {% else %}
             <div class="picture align--middle"></div>
+            {% endif %}
             <div class="info align--middle">
                 <div class="user font--main font--black align--left">{{ job['user']['name'] }}</div>
-                <div class="date font--main align--left">5 days ago</div>
+                <div class="date font--main align--left">{{ job['created_at'] }}</div>
             </div>
         </div>
         <div class="title font--black align--left">{{ job['title'] }}</div>

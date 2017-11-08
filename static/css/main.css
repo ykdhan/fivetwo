@@ -104,6 +104,19 @@ img {
     vertical-align: middle;
 }
 
+
+.hover, .hover-small {
+    transition: transform 0s ease-out;
+    transform-origin: center;
+}
+.hover:hover {
+    transform: scale(1.06);
+}
+.hover-small:hover {
+    transform: scale(1.02);
+}
+
+
 .align--left {
     text-align: left;
 }
@@ -230,13 +243,6 @@ header #user-name {
     display: inline-block;
     font-size: 0.85rem;
 }
-header #sign-out {
-    width: 0.9rem !important;
-    height: auto;
-    float: right;
-    vertical-align: middle;
-    margin-top: 0.5rem;
-}
 
 
 #page {
@@ -345,11 +351,15 @@ header #sign-out {
 }
 .job .profile .picture {
     display: inline-block;
-    background-color: #bbb;
+    background: #fff;
     border-radius: 50%;
     width: 1.7rem;
     height: 1.7rem;
     margin-right: 0.3rem;
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+    background-image: url('/static/img/profile.svg');
 }
 .job .profile .info {
     display: inline-block;
@@ -428,4 +438,44 @@ header #sign-out {
 }
 .job .button {
     width: 1rem;
+}
+
+
+
+.cancel {
+    border: 0;
+    background: none;
+    color: #474747;
+    font-size: 0.8rem;
+    padding: 0.4rem;
+}
+.cancel:hover {
+    border: 0;
+    background: none;
+    color: #474747;
+}
+
+
+.lightbox {
+
+}
+.lightbox h1 {
+}
+.lightbox button {
+    display: inline-block;
+    width: 18rem;
+    margin: 0.5rem 0;
+    margin-bottom: 0;
+}
+.lightbox #preview-image {
+    margin: 2rem auto;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    padding: 0;
+    margin-top: 2rem;
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+    background-image: url('/static/img/profile.svg');
 }

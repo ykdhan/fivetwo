@@ -2,7 +2,7 @@
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: 30rem 1fr;
+    grid-template-columns: 1fr 37rem;
     grid-template-rows: 1fr;
     grid-gap: 0;
     -webkit-box-sizing: border-box;
@@ -260,6 +260,15 @@
 #page-job #submit {
     width: 26rem;
     margin-bottom: 3rem;
+}
+#page-job .submit.disabled {
+    border-color: transparent;
+    cursor: default;
+}
+#page-job .submit.disabled:hover {
+    border-color: transparent;
+    color: #E55A5A;
+    background: #fff;
 }
 
 #page-job #tags .tag {

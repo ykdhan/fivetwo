@@ -4,11 +4,22 @@
 
 {% block content %}
 
+
 <div id="page-profile" class="align--center">
 
     <div id="div-picture">
-        <h1>My Profile</h1>
-        <img alt="" id="preview-picture" class="box shadow" src="/static/img/profile.svg">
+        <h1>My Profile
+            <div id="div-sign-out" class="shadow hover">
+                Sign Out <img id="sign-out" alt="Sign Out" src="/static/img/icon-power.svg" onclick="logout()">
+            </div>
+        </h1>
+        <a href="#profile-picture">
+            {% if profile_picture != 'NO' %}
+                <div id="preview-picture" class="box shadow hover" style="background-image: url('/static/profiles/{{ profile_picture }}')"></div>
+            {% else %}
+                <div id="preview-picture" class="box shadow hover"></div>
+            {% endif %}
+        </a>
     </div>
     <div id="div-profile" class="">
         <form method="POST">
@@ -26,6 +37,7 @@
                     <div class="row">{{ profile_form.position(placeholder="Position", class="") }}</div>
                 {% endif %}
             {% endif %}
+            <div class="row">{{ profile_form.introduction(placeholder="Introduction (optional)", class="", rows="6") }}</div>
             <div class="row">{{ profile_form.submit(class_='submit') }}</div>
         </form>
     </div>
@@ -33,6 +45,37 @@
         &copy; 2017 FiveTwo Co. All rights reserved.
     </div>
 </div>
+
+
+
+<div class="remodal" data-remodal-id="profile-picture" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc">
+
+    <div class="lightbox">
+        <form method="post" enctype="multipart/form-data">
+
+        <h1>Profile Picture</h1>
+
+        <div id="preview-image"></div>
+        <img alt="preview" src="" id="preview" hidden>
+
+        <div class="error" id="error-image"></div>
+
+        <input type="file" id="input-image" name="input-image" onchange="choose_image(this)" hidden accept="image/*">
+        <button type="button" id="choose-image">Choose Image</button>
+        <button type="button" id="update-image" onclick="update_image()">Update</button>
+
+        <a href="#"><button type="button" class="cancel">Cancel</button></a>
+
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
 
 <script>
 
@@ -55,6 +98,75 @@ function tab(evt, tabName) {
         document.getElementById('is_student').value = 'YES';
     } else if (tabName == 'tab-faculty') {
         document.getElementById('is_student').value = 'NO';
+    }
+}
+
+
+$("#choose-image").click(function(){
+    $("#input-image").click();
+});
+var formdata = new FormData();
+var profile_type = "";
+function choose_image(prof) {
+
+    document.getElementById('error-image').innerHTML = "";
+
+    var file = prof.files[0];
+    var imagefile = file.type;
+    profile_type = file.type.split("/")[1];
+
+    var match = ["image/jpeg","image/png","image/jpg","image/gif"];
+
+    if(!((imagefile==match[0]) || (imagefile==match[1]) || (imagefile==match[2]) || (imagefile==match[3]))) {
+        imageNotLoaded();
+        $('#input-image').val('');
+        document.getElementById('error-image').innerHTML = 'Invalid file type (jpg, gif, png)';
+    } else {
+        if (file.size > 2000000) {
+            imageNotLoaded();
+            $('#input-image').val('');
+            document.getElementById('error-image').innerHTML = 'Invalid file size (Max: 2 MB)';
+        } else {
+            var reader = new FileReader();
+            reader.onload = imageIsLoaded;
+            reader.readAsDataURL(file);
+            formdata.append("input-image", file);
+        }
+    }
+
+}
+function imageIsLoaded(e) {
+    $('img[alt="preview"]').attr('src', e.target.result);
+    $('#preview-image').css({backgroundImage: 'url("'+$('img[alt="preview"]').attr('src')+'")'});
+}
+function imageNotLoaded() {
+    $('#preview-image').css({backgroundImage: 'url("/static/img/profile.svg")'});
+}
+
+function update_image () {
+
+    $.ajax({
+        url: "/upload-profile",
+        type: "POST",
+        data:  formdata,
+        contentType: false,
+        processData:false,
+        success: function(data) {
+            console.log(data);
+            if (data == 1) {
+                window.location.href = "#";
+            } else {
+                alert("Error: "+data);
+            }
+        }
+    });
+
+}
+
+
+function logout() {
+    if (window.confirm("Would you like to sign out?")) {
+        window.location.href = "/logout";
     }
 }
 

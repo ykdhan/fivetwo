@@ -87,11 +87,11 @@ def sign_up(name, email, password, is_campus):
                 campus = 'INSERT INTO user_campus (id) VALUES (:user_id)'
                 campus_cursor = g.db.execute(campus, {'user_id': user_id})
                 g.db.commit()
-                if campus_cursor.rowcount == 1:
-                    return 1
-            return 2
+                if campus_cursor.rowcount != 1:
+                    return 0
+            return user_id
         else:
-            return 3
+            return 0
     return 0
 
 
@@ -101,10 +101,10 @@ def sign_up_more(user_id, is_student, name, gender, contact, date_of_birth, majo
     signup_cursor = g.db.execute(signup, {'user_id': user_id, 'gender': gender, 'contact': contact, 'birth': birth})
     g.db.commit()
     if signup_cursor.rowcount == 1:
-        signup_name = 'UPDATE user SET name = :user_name WHERE id = :user_id'
-        name_cursor = g.db.execute(signup_name, {'user_id': user_id, 'user_name': name})
-        g.db.commit()
         if is_student == 'YES':
+            signup_name = 'UPDATE user SET name = :user_name WHERE id = :user_id'
+            name_cursor = g.db.execute(signup_name, {'user_id': user_id, 'user_name': name})
+            g.db.commit()
             student = '''
                             UPDATE user_campus SET is_student = :is_student, major = :major, class_year = :class_year
                             WHERE id = :user_id
@@ -114,6 +114,9 @@ def sign_up_more(user_id, is_student, name, gender, contact, date_of_birth, majo
             if student_cursor.rowcount != 1:
                 return 0
         elif is_student == 'NO':
+            signup_name = 'UPDATE user SET name = :user_name WHERE id = :user_id'
+            name_cursor = g.db.execute(signup_name, {'user_id': user_id, 'user_name': name})
+            g.db.commit()
             faculty = '''
                             UPDATE user_campus SET is_student = :is_student, department = :department, position = :position
                             WHERE id = :user_id
@@ -130,12 +133,12 @@ def sign_up_more(user_id, is_student, name, gender, contact, date_of_birth, majo
     return 0
 
 
-def update_profile(user_id, is_student, name, gender, contact, date_of_birth, major, year, department, position):
+def update_profile(user_id, is_student, name, gender, contact, date_of_birth, major, year, department, position, introduction):
     print('update')
     birth = datetime.datetime.strptime(date_of_birth, '%m/%d/%Y').strftime("%Y-%m-%d")
-    update = 'UPDATE user SET name = :user_name, gender = :gender, contact = :contact, date_of_birth = :date_of_birth WHERE id = :user_id'
+    update = 'UPDATE user SET name = :user_name, gender = :gender, contact = :contact, date_of_birth = :date_of_birth, introduction = :introduction WHERE id = :user_id'
     update_cursor = g.db.execute(update, {'user_id': user_id, 'user_name': name, 'gender': gender, 'contact': contact,
-                                             'date_of_birth': birth})
+                                             'date_of_birth': birth, 'introduction': introduction})
     g.db.commit()
     if update_cursor.rowcount == 1:
         if is_student == 'YES':
@@ -197,9 +200,15 @@ def job_answers(application_id):
     return g.db.execute('SELECT * FROM answer WHERE application_id = ?', (application_id,)).fetchall()
 
 
-
 def job_applications(job_id):
     return g.db.execute('SELECT * FROM application WHERE job_id = ? ORDER BY created_at DESC', (job_id,)).fetchall()
+
+
+def job_applied(job_id,user_id):
+    applied = g.db.execute('SELECT * FROM application WHERE job_id = ? and user_id = ?', (job_id,user_id)).fetchall()
+    if applied is not None:
+        return True
+    return False
 
 
 def posts(user_id):
@@ -281,6 +290,7 @@ def apply_job(user_id, job_id, job_answers):
     if app_cursor.rowcount == 1:
         num = 1
         for answer in job_answers:
+            print (answer)
             create = '''
                               INSERT INTO answer (application_id, num, answer)
                              VALUES (:app_id, :num, :answer)
@@ -291,3 +301,11 @@ def apply_job(user_id, job_id, job_answers):
         return 1
     return 0
 
+
+def upload_profile(user_id, name):
+    upload = 'UPDATE user SET profile_picture = :profile_picture WHERE id = :user_id'
+    upload_cursor = g.db.execute(upload, {'user_id': user_id, 'profile_picture': name})
+    g.db.commit()
+    if upload_cursor.rowcount == 1:
+        return 1
+    return 0

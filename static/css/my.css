@@ -111,6 +111,18 @@
     padding: 1rem;
     text-align: right;
 }
+#page-applications .questions {
+    padding: 2rem;
+    padding-top: 0;
+}
+#page-applications .question {
+    font-weight: 600;
+}
+#page-applications .answer {
+    font-weight: 400;
+}
+
+
 
 #page-posts .empty-list, #page-applications .empty-list {
     margin: 1rem;
@@ -146,23 +158,28 @@
 #page-profile #div-picture h1 {
     color: #fff;
 }
+#page-profile #preview-picture {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    padding: 0;
+    margin-top: 4rem;
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+    background-image: url('/static/img/profile.svg');
+}
+
+
 #page-profile #div-profile {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     margin: 0 auto;
-    background: #fff;
     vertical-align: middle;
     padding: 2rem;
     padding-top: 8rem;
     padding-bottom: 8rem;
-}
-#page-profile #preview-picture {
-    width: 10rem;
-    height: 10rem;
-    border-radius: 25rem;
-    padding: 0;
-    margin-top: 2rem;
 }
 #page-profile .row {
     margin: 0 auto 1rem auto;
@@ -175,6 +192,9 @@
 #page-profile select, #page-profile .submit {
     width: 22rem;
 }
+#page-profile .submit {
+    margin-top: 1.5rem;
+}
 
 #page-profile #div-footer {
     background: #7a7a7a;
@@ -183,3 +203,28 @@
     font-size: 0.8rem;
     color: #cecece;
 }
+
+#page-profile #div-sign-out {
+    border-radius: 50rem;
+    background: #fff;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0.6rem 1rem;
+    padding-top: 0.65rem;
+    text-align: center;
+    float: right;
+    cursor: pointer;
+    text-transform: none;
+    font-size: 0.8rem;
+    color: #474747;
+    margin-top: -0.4rem;
+    margin-right: -0.3rem;
+}
+#page-profile #sign-out {
+    width: 0.9rem !important;
+    height: auto;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+    margin-top: -0.15rem;
+}
+

@@ -8,10 +8,15 @@
     <meta name="viewport" content="width=device-width">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="52CO" />
+    <link rel="shortcut icon" href="/static/img/fivetwo-144.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="/static/img/fivetwo-70.png"/>
+	<link rel="apple-touch-icon" sizes="114x114" href="/static/img/fivetwo-114.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/img/fivetwo-144.png" />
 
     <link rel="stylesheet" type="text/css" href="/static/css/animate.css">
     <link rel="stylesheet" type="text/css" href="/static/css/main.css?ver=1.0">
     <link rel="stylesheet" type="text/css" href="/static/css/job.css?ver=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/css/board.css?ver=1.0">
     <link rel="stylesheet" type="text/css" href="/static/css/my.css?ver=1.0">
     <link rel="stylesheet" type="text/css" href="/static/css/login.css?ver=1.0">
     <link rel="stylesheet" type="text/css" href="/static/css/remodal.css">
@@ -25,6 +30,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/remodal.js"></script>
+    <script type="text/javascript" src="/static/js/cropbox-min.js"></script>
 
 
     <!--
@@ -61,10 +67,12 @@
     <section class="align--left align--vertical">
         &copy; 2017
     </section>
+{% elif not_registered == True %}
 {% else %}
     <section>
         <a href="{{ url_for('index') }}"><div class="menu" id="menu-search"><img alt="" src="/static/img/icon-search-gray.svg">Search Job</div></a>
         <a href="{{ url_for('new') }}"><div class="menu" id="menu-new"><img alt="" src="/static/img/icon-add-gray.svg">Post Job</div></a>
+        <a href="{{ url_for('board') }}"><div class="menu" id="menu-board"><img alt="" src="/static/img/icon-board-gray.svg">Bulletin Board</div></a>
         <a href="{{ url_for('posts') }}"><div class="menu" id="menu-posts"><img alt="" src="/static/img/icon-jobs-gray.svg">My Posts</div></a>
         <a href="{{ url_for('applications') }}"><div class="menu" id="menu-applications"><img alt="" src="/static/img/icon-edit-gray.svg">My Applications</div></a>
     </section>
@@ -73,9 +81,6 @@
             <a href="{{ url_for('profile') }}">
             <img id="profile-picture" alt="PROFILE" src="/static/img/profile.svg">
             <div id="user-name" class="font--main font--500 align--middle">{{ current_user.name }}</div>
-            </a>
-            <a href="{{ url_for('logout') }}">
-            <img id="sign-out" alt="Sign Out" src="/static/img/power.svg">
             </a>
         </div>
     </section>

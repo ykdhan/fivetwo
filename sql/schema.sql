@@ -8,6 +8,7 @@ CREATE TABLE user
   gender          TEXT NULL,
   contact         TEXT NULL,
   date_of_birth   DATE NULL,
+  introduction    TEXT NULL,
   profile_picture TEXT DEFAULT 'NO',
   is_campus       TEXT DEFAULT 'NO',
   is_registered   TEXT DEFAULT 'NO',
@@ -44,6 +45,7 @@ CREATE TABLE job
   day            TEXT NULL,
   money          INTEGER NOT NULL,
   every          TEXT NOT NULL,
+  only_campus   TEXT DEFAULT 'NO',
   accepted       INTEGER REFERENCES application (id) DEFAULT 0,
   created_at     DATETIME DEFAULT CURRENT_TIMESTAMP
 );

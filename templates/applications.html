@@ -15,10 +15,14 @@
         <div class="div-job">
         <div class="job shadow">
             <div class="profile align--left">
+                {% if a['job']['user']['picture'] != 'NO' %}
+                <div class="picture align--middle" style="background-image: url('/static/profiles/{{ a['job']['user']['picture'] }}');"></div>
+                {% else %}
                 <div class="picture align--middle"></div>
+                {% endif %}
                 <div class="info align--middle">
                     <div class="user font--main font--black align--left">{{ a['job']['user']['name'] }}</div>
-                    <div class="date font--main align--left">5 days ago</div>
+                    <div class="date font--main align--left">{{ a['job']['created_at'] }}</div>
                 </div>
             </div>
             <div class="title font--black align--left">{{ a['job']['title'] }}</div>
@@ -92,8 +96,10 @@
                     <div class="application-date">{{ a['date'] }}</div>
                 </div>
                 {% for q in a['questions'] %}
-                    <div class="row">{{ q['question'] }}</div>
-                    <div class="row">{{ q['answer'] }}</div>
+                    <div class="questions">
+                        <div class="question">{{ q['question'] }}</div>
+                        <div class="answer">{{ q['answer'] }}</div>
+                    </div>
                 {% else %}
                 {% endfor %}
             </div>

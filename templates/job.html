@@ -11,10 +11,14 @@
 
         <div class="job shadow">
             <div class="profile align--left">
+                {% if job['user']['picture'] != 'NO' %}
+                <div class="picture align--middle" style="background-image: url('/static/profiles/{{ job['user']['picture'] }}');"></div>
+                {% else %}
                 <div class="picture align--middle"></div>
+                {% endif %}
                 <div class="info align--middle">
                     <div class="user font--main font--black align--left">{{ job['user']['name'] }}</div>
-                    <div class="date font--main align--left">5 days ago</div>
+                    <div class="date font--main align--left">{{ job['created_at'] }}</div>
                 </div>
             </div>
             <div class="title font--black align--left">{{ job['title'] }}</div>
@@ -96,17 +100,23 @@
             {% for question in job['questions'] %}
             <div class="row">
                 <div class="question">{{ question['question'] }}</div>
-                <div class="answer"><textarea id="answer{{ question['num'] }}" placeholder="Answer" rows="5"></textarea></div>
+                <div class="answer"><textarea id="answer{{ question['num'] }}" name="answer{{ question['num'] }}" placeholder="Answer" rows="5"></textarea></div>
             </div>
             {% else %}
             {% endfor %}
+            {% if applied == True %}
+            <div class="row"><input class="submit disabled" id="submit" name="submit" value="Application Submitted" disabled type="submit"></div>
+            {% else %}
             <div class="row">{{ form.submit(class_='submit') }}</div>
+            {% endif %}
         </form>
     </div>
 
 </div>
 
 <script>
+document.getElementById('menu-search').style.color = '#E55A5A';
+document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg">Search Job';
 </script>
 
 {% endblock %}
