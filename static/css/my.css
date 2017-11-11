@@ -23,25 +23,59 @@
     margin: 0 auto;
     background: none;
 }
-#page-posts .job:hover {
-    transform: none;
-    z-index: 2;
-}
-#page-posts .div-job:hover {
-    transform: scale(1.03);
-    transition: transform 0.1s ease-out;
-    z-index: 2;
-}
-#page-posts .bottom {
+#page-posts .post {
     background: #fff;
     border-radius: 0.5rem;
-    width: 13rem;
-    margin: 0.5rem auto 0 auto;
-    padding: 0.5rem 1rem;
+    width: 15rem;
+    height: 11rem;
+    margin: 0.5rem auto;
     cursor: pointer;
 }
+#page-posts .post .date {
+    padding: 0.8rem;
+    padding-bottom: 0;
+    font-size: 0.8rem;
+    text-align: right;
+}
+#page-posts .post .title {
+    font-size: 1rem;
+    padding: 0.8rem;
+    padding-top: 0.3rem;
+    padding-bottom: 1.3rem;
+    font-weight: 600;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+#page-posts .post .day {
+    color: #474747;
+    font-size: 0.9rem;
+    background: #cecece;
+    border-radius: 0.25rem;
+    margin: 0 auto;
+    display: inline-block;
+    padding: 0.3rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+}
+#page-posts .post .day span {
+    color: #aeaeae;
+    margin-right: 0.2rem;
+}
+#page-posts .post .day .work {
+    color: #252525;
+}
+#page-posts .post .time {
+    font-size: 0.9rem;
+    margin-top: 0.5em;
+}
+#page-posts .bottom {
+    padding: 0.8rem;
+    padding-top: 0;
+    margin-top: -0.3rem;
+}
 #page-posts .bottom .status {
-
+    float: left;
+    text-align: left;
 }
 #page-posts .bottom .applications {
     float: right;

@@ -9,13 +9,13 @@
 
     <div id="div-picture">
         <h1>My Profile
-            <div id="div-sign-out" class="shadow hover">
-                Sign Out <img id="sign-out" alt="Sign Out" src="/static/img/icon-power.svg" onclick="logout()">
+            <div id="div-sign-out" class="shadow hover" onclick="logout()">
+                Sign Out <img id="sign-out" alt="Sign Out" src="/static/img/icon-power.svg">
             </div>
         </h1>
         <a href="#profile-picture">
-            {% if profile_picture != 'NO' %}
-                <div id="preview-picture" class="box shadow hover" style="background-image: url('/static/profiles/{{ profile_picture }}')"></div>
+            {% if current_user.picture != 'NO' %}
+                <div id="preview-picture" class="box shadow hover" style="background-image: url('/static/profiles/{{ current_user.picture }}')"></div>
             {% else %}
                 <div id="preview-picture" class="box shadow hover"></div>
             {% endif %}
@@ -150,10 +150,11 @@ function update_image () {
         type: "POST",
         data:  formdata,
         contentType: false,
-        processData:false,
+        processData: false,
         success: function(data) {
             console.log(data);
             if (data == 1) {
+                $('#preview-picture').css({backgroundImage: 'url("'+$('img[alt="preview"]').attr('src')+'")'});
                 window.location.href = "#";
             } else {
                 alert("Error: "+data);

@@ -44,7 +44,7 @@
 
 <header class="shadow">
     <section>
-        <div class="align--middle align--center"><a href="{{ url_for('index') }}"><img id="logo" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
+        <div class="align--middle align--center"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
         <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
     </section>
 {% if login == True %}
@@ -72,14 +72,17 @@
     <section>
         <a href="{{ url_for('index') }}"><div class="menu" id="menu-search"><img alt="" src="/static/img/icon-search-gray.svg">Search Job</div></a>
         <a href="{{ url_for('new') }}"><div class="menu" id="menu-new"><img alt="" src="/static/img/icon-add-gray.svg">Post Job</div></a>
-        <a href="{{ url_for('board') }}"><div class="menu" id="menu-board"><img alt="" src="/static/img/icon-board-gray.svg">Bulletin Board</div></a>
         <a href="{{ url_for('posts') }}"><div class="menu" id="menu-posts"><img alt="" src="/static/img/icon-jobs-gray.svg">My Posts</div></a>
         <a href="{{ url_for('applications') }}"><div class="menu" id="menu-applications"><img alt="" src="/static/img/icon-edit-gray.svg">My Applications</div></a>
     </section>
     <section class="align--left align--vertical">
         <div id="profile" class="align--left">
             <a href="{{ url_for('profile') }}">
-            <img id="profile-picture" alt="PROFILE" src="/static/img/profile.svg">
+            {% if current_user.picture != 'NO' %}
+            <div id="profile-picture" style="background-image: url('/static/profiles/{{ current_user.picture }}');"></div>
+            {% else %}
+            <div id="profile-picture"></div>
+            {% endif %}
             <div id="user-name" class="font--main font--500 align--middle">{{ current_user.name }}</div>
             </a>
         </div>
@@ -110,6 +113,10 @@
 <footer>
 </footer>
 
+
+<script>
+
+</script>
 
 
 </body>

@@ -10,8 +10,8 @@
 
         <div class="job shadow">
             <div class="profile align--left">
-                {% if profile_picture != 'NO' %}
-                <div class="picture align--middle" style="background-image: url('/static/profiles/{{ profile_picture }}');"></div>
+                {% if current_user.picture != 'NO' %}
+                <div class="picture align--middle" style="background-image: url('/static/profiles/{{ current_user.picture }}');"></div>
                 {% else %}
                 <div class="picture align--middle"></div>
                 {% endif %}
@@ -20,7 +20,7 @@
                     <div class="date font--main align--left">{{ today }}</div>
                 </div>
             </div>
-            <div class="title font--black align--left" id="preview-title">Title</div>
+            <div class="title font--black align--left" id="preview-title">&nbsp;</div>
             <!--<div class="date font--gray">5 days ago</div>-->
             <div class="info align--center">
                 <div class="wage font--main font--black align--center" id="preview-wage"><span class="dollar">$</span>0<span class="cent">.00</span></div>
@@ -40,7 +40,7 @@
                 <div class="tag">&nbsp;</div>
             </div>
             <div class="align--center">
-                <img class="button" alt="" src="/static/img/card-button.svg">
+                <div class="bar"></div>
             </div>
         </div>
 
@@ -71,18 +71,29 @@
             </div>
             <div class="row"><input type="text" id="job-wage" placeholder="0.00">{{ form.every() }}
             </div>
-            <div class="row">
-                <input type="text" id="job-tag" placeholder="Tag">
+            <div class="row row-tag">
+                <div class="label">#</div>
+                <input type="text" name="job-tag" id="job-tag" placeholder="Tag">
                 <div id="job-tags">
                 </div>
             </div>
+            <h1 id="application-form">Application Form</h1>
+            <div class="row align--left">
+                <div class="div-checkbox">
+                    <div id="only-campus" class="checkbox" onclick="only_campus()">
+                    </div>Campus Limited</div>
+            </div>
             <div class="row">
-                {{ form.question1(placeholder="Question 1") }}<br>
-                {{ form.question2(placeholder="Question 2  (Optional)") }}<br>
-                {{ form.question3(placeholder="Question 3  (Optional)") }}
+                <div id="new-questions">
+                    <input type="text" class="question" id="question1" onkeyup="enter_question(1)" placeholder="Question 1  (optional)">
+                </div>
+                <div class="align--left">
+                    <button type="button" class="add" onclick="add_question()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                    <button type="button" class="subtract" onclick="delete_question()"><i class="fa fa-minus" aria-hidden="true"></i></button>
+                </div>
             </div>
             <div class="row">{{ form.submit(class_='submit') }}</div>
-                {{ form.term() }}{{ form.day() }}{{ form.wage() }}{{ form.tags() }}
+                {{ form.only_campus() }}{{ form.term() }}{{ form.day() }}{{ form.wage() }}{{ form.tags() }}{{ form.questions() }}
         </form>
     </div>
 
@@ -112,6 +123,8 @@ var form_end_time = document.getElementById('end_time');
 var form_wage = document.getElementById('wage');
 var form_every = document.getElementById('every');
 var form_tags = document.getElementById('tags');
+var form_questions = document.getElementById('questions');
+var form_only_campus = document.getElementById('only_campus');
 
 var start_ampm = document.getElementById('start_ampm');
 var end_ampm = document.getElementById('end_ampm');
@@ -120,6 +133,7 @@ function init() {
     document.getElementById('start_time').value = "8:00";
     document.getElementById('end_time').value = "9:00";
     form_term.value = "LONG";
+    form_only_campus.value = "NO";
 }
 init();
 
@@ -158,7 +172,11 @@ function tab(evt, tabName) {
 }
 
 $('#title').keyup(function () {
-    document.getElementById("preview-title").innerHTML = form_title.value;
+    if (form_title.value == "") {
+        document.getElementById("preview-title").innerHTML = "&nbsp;";
+    } else {
+        document.getElementById("preview-title").innerHTML = form_title.value;
+    }
 });
 
 function change_start_date() {
@@ -166,7 +184,7 @@ function change_start_date() {
     var input = document.getElementById('start_date').value;
 
     var date = new Date(input);
-    var months = ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     var start_date = months[date.getMonth()] + " " + date.getDate();
 
     if (end != "") {
@@ -469,7 +487,69 @@ function delete_tag(tag) {
 }
 
 
+function only_campus() {
+    var box = document.getElementById('only-campus');
+    if (form_only_campus.value == 'YES') {
+        box.innerHTML = "";
+        form_only_campus.value = "NO";
+    } else {
+        box.innerHTML = '<div class="checked"></div>';
+        form_only_campus.value = "YES";
+    }
+}
 
+var num_q = 1;
+var questions = {
+    '1': '',
+    '2': '',
+    '3': '',
+    '4': '',
+    '5': '',
+    '6': '',
+    '7': '',
+    '8': '',
+    '9': '',
+    '10': ''
+};
+function add_question() {
+    if (num_q < 10) {
+        num_q ++;
+        document.getElementById('new-questions').innerHTML += '<input type="text" class="question" id="question'+num_q+'" onkeyup="enter_question('+num_q+')" placeholder="Question '+num_q+'  (optional)">';
+        var forms = '';
+        for (var i = 1; i <= num_q; i ++) {
+            forms += '<input type="text" class="question" id="question'+i+'" onkeyup="enter_question('+i+')" placeholder="Question '+i+'  (optional)" value="'+questions[''+i]+'">';
+        }
+        document.getElementById('new-questions').innerHTML = forms;
+    }
+}
+function delete_question() {
+    if (num_q == 1) {
+        questions['1'] = "";
+        document.getElementById('question1').value = "";
+    } else if (num_q > 1) {
+        questions[''+num_q] = "";
+        num_q --;
+        var forms = '';
+        for (var i = 1; i <= num_q; i ++) {
+            forms += '<input type="text" class="question" id="question'+i+'" onkeyup="enter_question('+i+')" placeholder="Question '+i+'  (optional)" value="'+questions[''+i]+'">';
+        }
+        document.getElementById('new-questions').innerHTML = forms;
+    }
+}
+function enter_question(q) {
+    questions[''+q] = document.getElementById('question'+q).value;
+    var qs = '';
+    for (var i = 1; i <= num_q; i ++) {
+        console.log(i+" "+num_q);
+        if (i == num_q) {
+            qs += questions[''+i];
+        } else {
+            qs += questions[''+i] + '#';
+        }
+    }
+    form_questions.value = qs;
+    console.log(form_questions);
+}
 
 document.getElementById('menu-new').style.color = '#E55A5A';
 document.getElementById('menu-new').innerHTML = '<img alt="" src="/static/img/icon-add.svg">Post New';

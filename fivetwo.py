@@ -108,6 +108,10 @@ def load_user(id):
 # application file that handles the login page.
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
     login_form = LoginForm()
     signup_form = SignUpForm()
 
@@ -125,7 +129,7 @@ def login():
             pw = hashing.hash_value(signup_form.password.data, salt='Five&Two52')
             rowcount = db.sign_up(signup_form.name.data, signup_form.email.data, pw, 'NO')
             if rowcount != 1:
-                title = "Please verify your email!"
+                title = "Please verify your email"
                 message = "Dear " + signup_form.name.data + ",\r\n\r\nThank you for registering!"+\
                           "\r\nIn order to continue, please verify your email by clicking the link below." + \
                           "\r\n\r\nhttp://127.0.0.1:5000/verify/" + rowcount + \
@@ -156,7 +160,7 @@ def login():
                 </style>
                 </head><body><div id="frame"><img id="logo" alt="FIVETWO" src="https://fivetwo.co/static/img/fivetwo.svg">
                 <p id="dear">Greetings from FiveTwo,</p><p>Thank you for verifying your e-mail address.<br>Please click the button below to complete the process.</p>
-                <p><a href="http://127.0.0.1:5000/verify/'''+rowcount+''''"><button>Verify Email</button></a></p>
+                <p><a href="https://fivetwo.co/verify/'''+rowcount+'''"><button>Verify Email</button></a></p>
                 <p>If you did not request to have your email verified, you can safely ignore this email. Rest assured your customer account is safe.</p>
                 <p>With encryption, FiveTwo secures all user information and personal data.</p>
                 <p>Thanks for visiting FiveTwo!</p>
@@ -176,6 +180,10 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
     if current_user.is_campus == 'YES':
         logout_user()
         return redirect('/cas/logout')
@@ -186,6 +194,10 @@ def logout():
 
 @app.route('/welcome/<user_id>', methods=['GET', 'POST'])
 def welcome(user_id):
+
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
     name = db.user(user_id)['name']
     email = db.user(user_id)['email']
     return render_template('welcome.html', name=name, email=email, not_registered=True)
@@ -218,7 +230,12 @@ def index():
     if current_user.is_registered == 'NO':
         return redirect(url_for('sign_up'))
 
-    jobs = db.jobs()
+    if current_user.is_campus == 'YES':
+        community = False
+    else:
+        community = True
+
+    jobs = db.jobs(community)
     outputs = []
     for j in jobs:
         job = {}
@@ -356,9 +373,13 @@ def job(job_id):
     today = datetime.datetime.today()
 
     applied = db.job_applied(job_id,current_user.id)
-    print(applied)
 
     j = db.job(job_id)
+
+    if j['user_id'] == current_user.id:
+        employer = True
+    else:
+        employer = False
 
     job = {}
     job['id'] = j['id']
@@ -366,8 +387,8 @@ def job(job_id):
     job['user']['id'] = j['user_id']
     job['user']['name'] = db.user(j['user_id'])['name']
     job['user']['picture'] = db.user(j['user_id'])['profile_picture']
+    job['only_campus'] = j['only_campus']
     job['title'] = j['title']
-    job['date'] = j['created_at']
     job['description'] = j['description']
     job['term'] = j['term']
 
@@ -422,29 +443,113 @@ def job(job_id):
     job['tags'] = tags
     job['questions'] = questions
 
-    job_form = JobForm()
-
-    if job_form.validate_on_submit():
-        answers = []
-        print("1: "+job_form.answer1.data)
-        print("2: "+job_form.answer2.data)
-        print("3: "+job_form.answer2.data)
-        if job_form.answer1.data != "":
-            answers.append(job_form.answer1.data)
-        if job_form.answer2.data != "":
-            answers.append(job_form.answer2.data)
-        if job_form.answer3.data != "":
-            answers.append(job_form.answer3.data)
-
-        print(answers)
-        rowcount = db.apply_job(current_user.id, job_id, answers)
-
-        if rowcount == 1:
-            return redirect(url_for('applications'))
+    if employer:
+        prev_tags = ''
+        for t in tags:
+            prev_tags += t['description'] + '#'
+        prev_questions = ''
+        for q in questions:
+            prev_questions += q['question'] + '#'
+        if job['term'] == 'LONG':
+            job_form = EditForm(title=job['title'],
+                                only_campus=job['only_campus'],
+                                description=job['description'],
+                                questions=prev_questions,
+                                tags=prev_tags,
+                                term=job['term'],
+                                start_time=str(start_hour) + ":" + start_minute,
+                                end_time=str(end_hour) + ":" + end_minute,
+                                start_ampm=start_ampm,
+                                end_ampm=end_ampm,
+                                day=j['day'],
+                                wage=job['money'],
+                                every=job['every']
+                                )
         else:
-            flash("Error: Cannot apply.")
+            job_form = EditForm(title=job['title'],
+                                only_campus=job['only_campus'],
+                                description=job['description'],
+                                questions=prev_questions,
+                                tags=prev_tags,
+                                term=job['term'],
+                                start_date=datetime.datetime.strptime(j['start_date'], '%Y-%m-%d').strftime("%m/%d/%Y"),
+                                end_date=datetime.datetime.strptime(j['end_date'], '%Y-%m-%d').strftime("%m/%d/%Y"),
+                                start_time=str(start_hour) + ":" + start_minute,
+                                end_time=str(end_hour) + ":" + end_minute,
+                                start_ampm=start_ampm,
+                                end_ampm=end_ampm,
+                                wage=job['money'],
+                                every=job['every']
+                                )
 
-    return render_template('job.html', job=job, form=job_form, today=today, applied=applied)
+        if job_form.validate_on_submit():
+
+            print('Title:' + str(job_form.title.data))
+            print('Description:' + str(job_form.description.data))
+            print('Wage:' + str(job_form.wage.data))
+            print('Every:' + str(job_form.every.data))
+            print('StartDate:' + str(job_form.start_date.data))
+            print('EndDate:' + str(job_form.end_date.data))
+            print('StartTime:' + str(job_form.start_time.data))
+            print('EndTime:' + str(job_form.end_time.data))
+            print('Day:' + str(job_form.day.data))
+            print('Tags:' + str(job_form.tags.data))
+            print('Questions:' + str(job_form.questions.data))
+            print('Only Campus:' + str(job_form.only_campus.data))
+            print('Term:' + str(job_form.term.data))
+
+            if job_form.term.data == 'LONG':
+                edit_start_date = None
+                edit_end_date = None
+            else:
+                edit_start_date = datetime.datetime.strptime(job_form.start_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
+                edit_end_date = datetime.datetime.strptime(job_form.end_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
+
+            tags = []
+            tag_data = job_form.tags.data.split("#")
+            for t in tag_data:
+                if t != '':
+                    tags.append(t)
+            questions = []
+            question_data = job_form.questions.data.split("#")
+            for q in question_data:
+                if q != '':
+                    questions.append(q)
+
+            edit_start_time = job_form.start_time.data
+            edit_end_time = job_form.end_time.data
+            if job_form.start_ampm.data == 'PM':
+                edit_start_time = str(int(job_form.start_time.data.split(':')[0]) + 12) + ':' + job_form.start_time.data.split(':')[1]
+            if job_form.end_ampm.data == 'PM':
+                edit_end_time = str(int(job_form.end_time.data.split(':')[0]) + 12) + ':' + job_form.end_time.data.split(':')[1]
+
+            rowcount = db.edit_job(job_id, job_form.title.data, job_form.description.data,
+                                   job_form.term.data, edit_start_date, edit_end_date,
+                                   edit_start_time, edit_end_time, job_form.day.data,
+                                   int(job_form.wage.data), job_form.every.data, tags, questions,
+                                   job_form.only_campus.data)
+            if rowcount == 1:
+                flash("Your job has been edited.")
+            else:
+                flash("Error: Cannot edit job.")
+
+    else:
+        job_form = JobForm()
+
+        if job_form.validate_on_submit():
+            answers = []
+            for a in job_form.answers.data.split('#'):
+                answers.append(a)
+
+            print(answers)
+            rowcount = db.apply_job(current_user.id, job_id, answers)
+
+            if rowcount == 1:
+                return redirect(url_for('applications'))
+            else:
+                flash("Error: Cannot apply.")
+
+    return render_template('job.html', job=job, form=job_form, today=today, applied=applied, employer=employer)
 
 
 @app.route('/new', methods=["GET", "POST"])
@@ -471,6 +576,8 @@ def new():
         print('EndTime:'+str(post_form.end_time.data))
         print('Day:'+str(post_form.day.data))
         print('Tags:'+str(post_form.tags.data))
+        print('Questions:'+str(post_form.questions.data))
+        print('Only Campus:'+str(post_form.only_campus.data))
         print('Term:'+str(post_form.term.data))
 
         if post_form.term.data == 'LONG':
@@ -480,29 +587,41 @@ def new():
             start_date = datetime.datetime.strptime(post_form.start_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
             end_date = datetime.datetime.strptime(post_form.end_date.data, '%m/%d/%Y').strftime("%Y-%m-%d")
 
-        tags = post_form.tags.data.split("#")
-        questions = []
+        start_time = post_form.start_time.data
+        end_time = post_form.end_time.data
+        if post_form.start_ampm.data == 'PM':
+            start_time = str(int(post_form.start_time.data.split(':')[0]) + 12) + ':' + post_form.start_time.data.split(':')[1]
+        if post_form.end_ampm.data == 'PM':
+            end_time = str(int(post_form.end_time.data.split(':')[0]) + 12) + ':' + post_form.end_time.data.split(':')[1]
 
-        if post_form.question1.data is not None and post_form.question1.data != "":
-            questions.append(post_form.question1.data)
-        if post_form.question2.data is not None and post_form.question2.data != "":
-            questions.append(post_form.question2.data)
-        if post_form.question3.data is not None and post_form.question3.data != "":
-            questions.append(post_form.question3.data)
+        tags = []
+        tag_data = post_form.tags.data.split("#")
+        for t in tag_data:
+            if t != '':
+                tags.append(t)
+        questions = []
+        question_data = post_form.questions.data.split("#")
+        for q in question_data:
+            if q != '':
+                questions.append(q)
 
         rowcount = db.post_job(current_user.id, post_form.title.data, post_form.description.data, post_form.term.data, start_date,
-                           end_date, post_form.start_time.data, post_form.end_time.data, post_form.day.data,
-                           int(post_form.wage.data), post_form.every.data, tags, questions)
+                           end_date, start_time, end_time, post_form.day.data,
+                           int(post_form.wage.data), post_form.every.data, tags, questions, post_form.only_campus.data)
         if rowcount == 1:
             return redirect(url_for('index'))
         else:
             flash("Error: Cannot post new job.")
 
-    return render_template('new.html', form=post_form, profile_picture=current_user.picture, today=today)
+    return render_template('new.html', form=post_form, today=today)
 
 
 @app.route('/posts', methods=["GET", "POST"])
 def posts():
+
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
     jobs = db.posts(current_user.id)
 
     outputs = []
@@ -558,6 +677,10 @@ def posts():
 
         job['money'] = str(j['money'])
         job['every'] = j['every']
+        create_day = int(datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d'))
+        create_month = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%b')
+        create_year = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%Y')
+        job['created_at'] = create_month + " " + str(create_day) + ", " + create_year
 
         tags = db.job_tags(job['id'])
 
@@ -569,6 +692,10 @@ def posts():
 
 @app.route('/applications', methods=["GET", "POST"])
 def applications():
+
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
     applications = db.applications(current_user.id)
 
     outputs = []
@@ -651,14 +778,12 @@ def applications():
     return render_template('applications.html', applications=outputs)
 
 
-@app.route('/board', methods=["GET", "POST"])
-def board():
-    return render_template('board.html')
-
 @app.route('/sign-up', methods=["GET", "POST"])
 def sign_up():
-    if current_user is None:
+
+    if not current_user.is_authenticated:
         return redirect(url_for('login'))
+
     user = db.user(current_user.id)
     if db.user(current_user.id) is None:
         return redirect(url_for('index'))
@@ -715,7 +840,8 @@ def sign_up():
 @app.route('/verify/<user_id>', methods=["GET", "POST"])
 def verify(user_id):
 
-    # check if logged in
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
 
     signup_form = SignUpMoreForm()
     if signup_form.is_submitted():
@@ -739,8 +865,11 @@ def verify(user_id):
 
 @app.route('/profile', methods=["GET", "POST"])
 def profile():
+
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
     user = db.user(current_user.id)
-    profile_picture = user['profile_picture']
     if user['introduction'] is None:
         introduction = ""
     else:
@@ -783,7 +912,7 @@ def profile():
         else:
             flash("Error: Cannot update profile.")
 
-    return render_template('profile.html', profile_form=profile_form, profile_picture=profile_picture)
+    return render_template('profile.html', profile_form=profile_form)
 
 
 @app.route('/upload-profile', methods=['POST'])
@@ -794,7 +923,7 @@ def upload_profile():
     file = request.files['input-image']
     name = id+'.'+file.filename.split('.')[-1]
     print(name)
-    f = os.path.join('static\profiles', name)
+    f = os.path.join('static/profiles', name)
     print(f)
     file.save(f)
     db.upload_profile(current_user.id, name)
@@ -852,10 +981,9 @@ class ProfileForm(FlaskForm):
 
 class PostForm(FlaskForm):
     title = StringField('Title')
+    only_campus = HiddenField('Only Campus')
     description = TextAreaField('Description')
-    question1 = StringField('Question 1')
-    question2 = StringField('Question 2')
-    question3 = StringField('Question 3')
+    questions = HiddenField('Questions')
     term = HiddenField('Term')
     start_date = StringField('Start Date')
     end_date = StringField('End Date')
@@ -870,10 +998,27 @@ class PostForm(FlaskForm):
     submit = SubmitField('Post')
 
 
+class EditForm(FlaskForm):
+    title = StringField('Title')
+    only_campus = HiddenField('Only Campus')
+    description = TextAreaField('Description')
+    questions = HiddenField('Questions')
+    term = HiddenField('Term')
+    start_date = StringField('Start Date')
+    end_date = StringField('End Date')
+    start_time = StringField('Start Time')
+    end_time = StringField('End Time')
+    start_ampm = SelectField('Start AMPM', choices=[('AM', 'AM'), ('PM', 'PM')])
+    end_ampm = SelectField('End AMPM', choices=[('AM', 'AM'), ('PM', 'PM')])
+    day = HiddenField('Day')
+    wage = HiddenField('Wage')
+    every = SelectField('Every', choices=[("HOUR", "Hour"),("DAY", "Day"),("WEEK", "Week"),("MONTH", "Month"),("ONE TIME", "One Time")])
+    tags = HiddenField('Tags')
+    submit = SubmitField('Edit')
+
+
 class JobForm(FlaskForm):
-    answer1 = TextAreaField('Answer 1')
-    answer2 = TextAreaField('Answer 2')
-    answer3 = TextAreaField('Answer 3')
+    answers = HiddenField('Answers')
     submit = SubmitField('Apply')
 
 

@@ -6,7 +6,7 @@ import random
 import os
 
 
-# DB_PATH = '/var/www/52CO/52CO.sqlite'
+#DB_PATH = '/var/www/52CO/52CO.sqlite'
 DB_PATH = '52CO.sqlite'
 
 
@@ -172,7 +172,9 @@ def random_id(length):
 
 
 # all available jobs
-def jobs():
+def jobs(community=False):
+    if community:
+        return g.db.execute('SELECT * FROM job WHERE accepted = 0 AND only_campus = ? ORDER BY created_at DESC',('NO',)).fetchall()
     return g.db.execute('SELECT * FROM job WHERE accepted = 0 ORDER BY created_at DESC').fetchall()
 
 
@@ -205,8 +207,8 @@ def job_applications(job_id):
 
 
 def job_applied(job_id,user_id):
-    applied = g.db.execute('SELECT * FROM application WHERE job_id = ? and user_id = ?', (job_id,user_id)).fetchall()
-    if applied is not None:
+    applied = g.db.execute('SELECT * FROM application WHERE job_id = ? and user_id = ?', (job_id,user_id)).fetchone()
+    if applied != None:
         return True
     return False
 
@@ -216,8 +218,11 @@ def posts(user_id):
 
 
 # post a new job
-def post_job(user_id, title, description, term, start_date, end_date, start_time, end_time, workday, money, every, job_tags, job_questions):
+def post_job(user_id, title, description, term, start_date, end_date, start_time, end_time, workday, money, every, job_tags, job_questions, only_campus):
     job_id = random_id(8)
+
+    print(job_questions)
+    print(job_tags)
 
     if term == 'LONG':
         start_date = None
@@ -227,13 +232,13 @@ def post_job(user_id, title, description, term, start_date, end_date, start_time
 
     create = '''
               INSERT INTO job (id, user_id, title, description, term, start_date, end_date, start_time,
-                                end_time, day, money, every)
+                                end_time, day, money, every, only_campus)
              VALUES (:id, :user_id, :title, :description, :term, :start_date, :end_date, :start_time, :end_time, 
-             :workday, :money, :every)
+             :workday, :money, :every, :only_campus)
              '''
     post_cursor = g.db.execute(create, {'id': job_id, 'user_id': user_id, 'title': title, 'description': description,
                                    'term': term, 'start_date': start_date, 'end_date': end_date, 'start_time': start_time,
-                                   'end_time': end_time, 'workday': workday, 'money': money, 'every': every})
+                                   'end_time': end_time, 'workday': workday, 'money': money, 'every': every, 'only_campus': only_campus})
     g.db.commit()
     if post_cursor.rowcount == 1:
         for tag in job_tags:
@@ -254,12 +259,84 @@ def post_job(user_id, title, description, term, start_date, end_date, start_time
                     job_tag_cursor = g.db.execute(create, {'job_id': job_id, 'tag_id': tag_id})
                     g.db.commit()
             else:
+                tag_id = exist['id']
                 create = '''
                             INSERT INTO job_tag (job_id, tag_id)
                             VALUES (:job_id, :tag_id)
                             '''
                 job_tag_cursor = g.db.execute(create, {'job_id': job_id, 'tag_id': tag_id})
                 g.db.commit()
+        num = 1
+        for question in job_questions:
+            create = '''
+                        INSERT INTO question (job_id, num, question)
+                        VALUES (:job_id, :num, :question)
+                        '''
+            tag_cursor = g.db.execute(create, {'job_id': job_id, 'num': num, 'question': question})
+            g.db.commit()
+            num += 1
+        return 1
+    return 0
+
+
+# edit job
+def edit_job(job_id, title, description, term, start_date, end_date, start_time, end_time, workday, money, every, job_tags, job_questions, only_campus):
+
+    if term == 'LONG':
+        start_date = None
+        end_date = None
+    else:
+        day = None
+
+    update = '''
+            UPDATE job SET title = :title, description = :description, 
+                            term = :term, start_date = :start_date, end_date = :end_date,
+                            start_time = :start_time, end_time = :end_time, day = :workday,
+                            money = :money, every = :every, only_campus = :only_campus
+                             WHERE id = :job_id'''
+    update_cursor = g.db.execute(update, {'job_id': job_id, 'title': title, 'description': description, 'term': term,
+                                          'start_date': start_date, 'end_date': end_date, 'start_time': start_time,
+                                          'end_time': end_time, 'workday': workday, 'money': money, 'every': every,
+                                          'only_campus': only_campus})
+    g.db.commit()
+    if update_cursor.rowcount == 1:
+        delete = '''
+            DELETE FROM job_tag
+            WHERE job_id = :job_id
+            '''
+        delete_cursor = g.db.execute(delete, {'job_id': job_id})
+        g.db.commit()
+        for tag in job_tags:
+            tag_id = random_id(8)
+            exist = g.db.execute('SELECT * FROM tag WHERE description = ?', (tag,)).fetchone()
+            if exist is None:
+                create = '''
+                            INSERT INTO tag (id, description)
+                            VALUES (:id, :description)
+                            '''
+                tag_cursor = g.db.execute(create, {'id': tag_id, 'description': tag})
+                g.db.commit()
+                if tag_cursor.rowcount == 1:
+                    create = '''
+                                INSERT INTO job_tag (job_id, tag_id)
+                                VALUES (:job_id, :tag_id)
+                                '''
+                    job_tag_cursor = g.db.execute(create, {'job_id': job_id, 'tag_id': tag_id})
+                    g.db.commit()
+            else:
+                tag_id = exist['id']
+                create = '''
+                            INSERT INTO job_tag (job_id, tag_id)
+                            VALUES (:job_id, :tag_id)
+                            '''
+                job_tag_cursor = g.db.execute(create, {'job_id': job_id, 'tag_id': tag_id})
+                g.db.commit()
+        delete = '''
+                    DELETE FROM question
+                    WHERE job_id = :job_id
+                    '''
+        delete_cursor = g.db.execute(delete, {'job_id': job_id})
+        g.db.commit()
         num = 1
         for question in job_questions:
             create = '''

@@ -4,16 +4,18 @@
 
 {% block content %}
 
-<div id="page-posts" class="align--center">
 
-    <h1>My Posts</h1>
+<div id="page-job">
+    <div class="column-left align--center">
+        <h1>Edit Job</h1>
 
-    <div id="posts" class="align--left">
-        {% for job in jobs %}<div class="div-job">
-        <a href="/job/{{ job['id'] }}">
-        <div class="job shadow hover-small">
+        <div class="job shadow">
             <div class="profile align--left">
+                {% if job['user']['picture'] != 'NO' %}
+                <div class="picture align--middle" style="background-image: url('/static/profiles/{{ job['user']['picture'] }}');"></div>
+                {% else %}
                 <div class="picture align--middle"></div>
+                {% endif %}
                 <div class="info align--middle">
                     <div class="user font--main font--black align--left">{{ job['user']['name'] }}</div>
                     <div class="date font--main align--left">{{ job['created_at'] }}</div>
@@ -78,22 +80,46 @@
                     <div class="tag">&nbsp;</div>
                 {% endfor %}
             </div>
-            <div class="bottom">
-                <span class="status font--yellow">Posted</span><span class="applications">{{ job['num_applications'] }}</span>
+            <div class="align--center">
+                <div class="bar"></div>
             </div>
-        </div></a>
-        </div>{% else %}
-            <div class="empty-list"><a class="link--white" href="{{ url_for('new') }}">Post</a> a new job!</div>
-        {% endfor %}
+        </div>
+
+    </div>
+    <div class="column-right align--center shadow">
+        <h1>Application</h1>
+        <div class="row" id="row-description">{{ job['description'] }}</div>
+        <div class="row align--left" id="tags">
+            {% for tag in job['tags'] %}
+                <div class="tag">#{{ tag['description'] }}</div>
+            {% else %}
+                <div class="tag">&nbsp;</div>
+            {% endfor %}
+        </div>
+        <form method="POST">
+        {{ form.csrf_token }}
+            {% for question in job['questions'] %}
+            <div class="row">
+                <div class="question">{{ question['question'] }}</div>
+                <div class="answer"><textarea id="answer{{ question['num'] }}" name="answer{{ question['num'] }}" placeholder="Answer" rows="5"></textarea></div>
+            </div>
+            {% else %}
+            {% endfor %}
+            {% if applied == True %}
+            <div class="row"><input class="submit disabled" id="submit" value="Application Submitted" disabled type="submit"></div>
+            {% elif employer == True %}
+            <div class="row"><a href="/job/{{ job['id'] }}/edit"><input class="submit" id="submit" value="Edit" type="submit"></a></div>
+            {% else %}
+            <div class="row">{{ form.submit(class_='submit') }}</div>
+            {% endif %}
+        </form>
     </div>
 
 </div>
 
-
-
 <script>
-    document.getElementById('menu-posts').style.color = '#E55A5A';
-    document.getElementById('menu-posts').innerHTML = '<img alt="" src="/static/img/icon-jobs.svg">My Posts';
+document.getElementById('menu-search').style.color = '#E55A5A';
+document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg">Search Job';
 </script>
 
 {% endblock %}

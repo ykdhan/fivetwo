@@ -21,12 +21,12 @@
                     <div class="date font--main align--left">{{ job['created_at'] }}</div>
                 </div>
             </div>
-            <div class="title font--black align--left">{{ job['title'] }}</div>
+            <div class="title font--black align--left" id="preview-title">{{ job['title'] }}</div>
             <!--<div class="date font--gray">5 days ago</div>-->
             <div class="info align--center">
-                <div class="wage font--main font--black align--center"><span class="dollar">$</span>{{ job['money'][:-2] }}<span class="cent">.{{ job['money'][-2:] }}</span></div>
-                <div class="every font--main font--gray align--center">{{ job['every'] }}</div>
-                <div class="day font--main">
+                <div class="wage font--main font--black align--center" id="preview-wage"><span class="dollar">$</span>{{ job['money'][:-2] }}<span class="cent">.{{ job['money'][-2:] }}</span></div>
+                <div class="every font--main font--gray align--center" id="preview-every">{{ job['every'] }}</div>
+                <div class="day font--main" id="preview-day">
                     {% if job['term'] == 'LONG' %}
                         {% if job['day'][0] == '0' %}
                             <span>S</span>
@@ -71,9 +71,9 @@
                         {% endif %}
                     {% endif %}
                 </div>
-                <div class="time font--main">{{ job['start_time'] }} - {{ job['end_time'] }}</div>
+                <div class="time font--main" id="preview-time">{{ job['start_time'] }} - {{ job['end_time'] }}</div>
             </div>
-            <div class="tags">
+            <div class="tags" id="preview-tags">
                 {% for tag in job['tags'] %}
                     <div class="tag">#{{ tag['description'] }}</div>
                 {% else %}
@@ -81,12 +81,571 @@
                 {% endfor %}
             </div>
             <div class="align--center">
-                <img class="button" alt="" src="/static/img/card-button.svg">
+                <div class="bar"></div>
             </div>
         </div>
 
     </div>
     <div class="column-right align--center shadow">
+
+    {% if employer == True %}
+        <h1>Information</h1>
+        <form method="POST">
+            {{ form.csrf_token }}
+            <div class="row">{{ form.title(placeholder="Title", class="") }}</div>
+            <div class="row">{{ form.description(placeholder="Description", class="", rows="6") }}</div>
+            <div class="row">
+                <div class="tabs">
+                    {% if job['term'] == 'SHORT' %}
+                    <div class="tab tab-now" onclick="tab(event, 'tab-short')">Short Term</div><div class="tab" onclick="tab(event, 'tab-long')">Long Term</div>
+                    {% else %}
+                    <div class="tab" onclick="tab(event, 'tab-short')">Short Term</div><div class="tab tab-now" onclick="tab(event, 'tab-long')">Long Term</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                {% if job['term'] == 'SHORT' %}
+                    <div id="tab-short" class="tab-content tab-content-now">
+                {% else %}
+                    <div id="tab-short" class="tab-content">
+                {% endif %}
+                    {{ form.start_date(placeholder="Start Date (mm/dd/yyyy)",onchange="change_start_date()") }}{{ form.end_date(placeholder="End Date (mm/dd/yyyy)",onchange="change_end_date()") }}
+                </div>
+                {% if job['term'] == 'LONG' %}
+                    <div id="tab-long" class="tab-content tab-content-now">
+                {% else %}
+                    <div id="tab-long" class="tab-content">
+                {% endif %}
+                    <ul>
+                       <li id="day-sun" onclick="select_day('sun')">S</li><li id="day-mon" onclick="select_day('mon')">M</li><li id="day-tue" onclick="select_day('tue')">T</li><li id="day-wed" onclick="select_day('wed')">W</li><li id="day-thu" onclick="select_day('thu')">T</li><li id="day-fri" onclick="select_day('fri')">F</li><li id="day-sat" onclick="select_day('sat')">S</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div id="tab-time">{{ form.start_time(onchange="time_change()") }}{{ form.start_ampm(class="ampm",onchange="time_change()") }}{{ form.end_time(onchange="time_change()") }}{{ form.end_ampm(class="ampm",onchange="time_change()") }}</div>
+            </div>
+            <div class="row"><input type="text" id="job-wage" placeholder="0.00">{{ form.every() }}
+            </div>
+            <div class="row row-tag">
+                <div class="label">#</div>
+                <input type="text" name="job-tag" id="job-tag" placeholder="Tag">
+                <div id="job-tags">
+                </div>
+            </div>
+            <h1 id="application-form">Application Form</h1>
+            <div class="row align--left">
+                <div class="div-checkbox">
+                    <div id="only-campus" class="checkbox" onclick="only_campus()">
+                    </div>Campus Limited</div>
+            </div>
+            <div class="row">
+                <div id="new-questions">
+                    <input type="text" class="question" id="question1" onkeyup="enter_question(1)" placeholder="Question 1  (optional)">
+                </div>
+                <div class="align--left">
+                    <button type="button" class="add" onclick="add_question()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                    <button type="button" class="subtract" onclick="delete_question()"><i class="fa fa-minus" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="row">{{ form.submit(class_='submit') }}</div>
+                {{ form.only_campus() }}{{ form.term() }}{{ form.day() }}{{ form.wage() }}{{ form.tags() }}{{ form.questions() }}
+        </form>
+
+
+        <script>
+            document.getElementById('menu-posts').style.color = '#E55A5A';
+            document.getElementById('menu-posts').innerHTML = '<img alt="" src="/static/img/icon-jobs.svg">My Posts';
+
+            var form_title = document.getElementById("title");
+            var form_day = document.getElementById('day');
+            var form_term = document.getElementById('term');
+            var form_start_time= document.getElementById('start_time');
+            var form_end_time = document.getElementById('end_time');
+            var form_wage = document.getElementById('wage');
+            var form_every = document.getElementById('every');
+            var form_tags = document.getElementById('tags');
+            var form_questions = document.getElementById('questions');
+            var form_only_campus = document.getElementById('only_campus');
+
+            var start_ampm = document.getElementById('start_ampm');
+            var end_ampm = document.getElementById('end_ampm');
+
+
+            function load_data() {
+                if (document.getElementById('only_campus').value == 'YES') {
+                    document.getElementById('only-campus').innerHTML = '<div class="checked"></div>';
+                }
+                if (document.getElementById('term').value == 'LONG') {
+                    var day_values = document.getElementById('day').value.toString().split('/');
+                    console.log(day_values);
+                    if (parseInt(day_values[0]) == 1) { select_day('sun'); }
+                    if (parseInt(day_values[1]) == 1) { select_day('mon'); }
+                    if (parseInt(day_values[2]) == 1) { select_day('tue'); }
+                    if (parseInt(day_values[3]) == 1) { select_day('wed'); }
+                    if (parseInt(day_values[4]) == 1) { select_day('thu'); }
+                    if (parseInt(day_values[5]) == 1) { select_day('fri'); }
+                    if (parseInt(day_values[6]) == 1) { select_day('sat'); }
+                } else {
+
+                }
+                var wage = document.getElementById('wage').value
+                var dollar = parseInt( parseInt(wage) / 100 );
+                var cent = wage.toString().substring(wage.length-2,wage.length);
+                document.getElementById('job-wage').value = dollar+"."+cent;
+                var prev_tags = document.getElementById('tags').value.toString().split('#');
+                console.log(prev_tags);
+                if (prev_tags.length > 0) {
+                    for (var i = 0; i < prev_tags.length; i++) {
+                        if (prev_tags[i] != "") {
+                            document.getElementById('job-tags').innerHTML += '<div class="job-tag-delete" onclick="delete_tag(this)">#'+prev_tags[i]+'</div>';
+                            tags.push(prev_tags[i]);
+                        }
+                    }
+                }
+                var prev_questions = document.getElementById('questions').value.toString().split('#');
+                console.log(prev_questions);
+                if (prev_questions.length > 0) {
+                    for (var i = 2; i <= prev_questions.length; i++) {
+                        if (prev_questions[i-1] != "") {
+                            document.getElementById('new-questions').innerHTML += '<input type="text" class="question" id="question' + i + '" onkeyup="enter_question(' + i + ')" placeholder="Question ' + i + '  (optional)">';
+                        }
+                    }
+                    for (var i = 0; i < prev_questions.length; i++) {
+                        if (prev_questions[i] != "") {
+                            if (i != 0) {
+                                num_q++;
+                            }
+                            questions["" + num_q] = prev_questions[i];
+                            document.getElementById('question' + num_q).value = questions[''+num_q];
+                        }
+                    }
+                }
+
+
+            }
+
+            function tab(evt, tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tab-content");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tab");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" tab-now", "");
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " tab-now";
+
+                if (tabName == 'tab-short') {
+                    document.getElementById('tab-short').innerHTML = '<input id="start_date" name="start_date" onchange="change_start_date()" placeholder="Start Date (mm/dd/yyyy)" value="" type="text"><input id="end_date" name="end_date" onchange="change_end_date()" placeholder="End Date (mm/dd/yyyy)" value="" type="text">';
+                    form_day.value = '';
+                    form_term.value = 'SHORT';
+                } else if (tabName == 'tab-long') {
+                    days = {
+                        sun: 0,
+                        mon: 0,
+                        tue: 0,
+                        wed: 0,
+                        thu: 0,
+                        fri: 0,
+                        sat: 0
+                    };
+                    document.getElementById('tab-long').innerHTML = '<ul><li id="day-sun" onclick="select_day(\'sun\')">S</li><li id="day-mon" onclick="select_day(\'mon\')">M</li><li id="day-tue" onclick="select_day(\'tue\')">T</li><li id="day-wed" onclick="select_day(\'wed\')">W</li><li id="day-thu" onclick="select_day(\'thu\')">T</li><li id="day-fri" onclick="select_day(\'fri\')">F</li><li id="day-sat" onclick="select_day(\'sat\')">S</li></ul>';
+                    document.getElementById('start_date').value = '';
+                    document.getElementById('end_date').value = '';
+                    form_term.value = 'LONG';
+                }
+            }
+
+            $('#title').keyup(function () {
+                if (form_title.value == "") {
+                    document.getElementById("preview-title").innerHTML = "&nbsp;";
+                } else {
+                    document.getElementById("preview-title").innerHTML = form_title.value;
+                }
+            });
+
+            function change_start_date() {
+                var end = document.getElementById('end_date').value;
+                var input = document.getElementById('start_date').value;
+
+                var date = new Date(input);
+                var months = ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
+                var start_date = months[date.getMonth()] + " " + date.getDate();
+
+                if (end != "") {
+                    var date2 = new Date(end);
+                    var end_date = months[date2.getMonth()] + " " + date2.getDate();
+                } else  {
+                    var end_date = "";
+                }
+
+                document.getElementById("preview-day").innerHTML = "";
+                if (end_date != "") {
+                    document.getElementById("preview-day").innerHTML = start_date + " - " + end_date;
+                } else {
+                    document.getElementById("preview-day").innerHTML = start_date;
+                }
+
+                form_term.value = 'SHORT';
+                form_day.value = '';
+            }
+            function change_end_date() {
+                var start = document.getElementById('start_date').value;
+                var input = document.getElementById('end_date').value;
+
+                var date = new Date(input);
+                var months = ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
+                var end_date = months[date.getMonth()] + " " + date.getDate();
+
+                if (start != "") {
+                    var date2 = new Date(start);
+                    var start_date = months[date2.getMonth()] + " " + date2.getDate();
+                } else  {
+                    var start_date = "";
+                }
+
+                document.getElementById("preview-day").innerHTML = "";
+                if (start_date != "") {
+                    if (start_date != end_date) {
+                        document.getElementById("preview-day").innerHTML = start_date + " - " + end_date;
+                    } else {
+                        document.getElementById("preview-day").innerHTML = end_date;
+                    }
+                } else {
+                    document.getElementById("preview-day").innerHTML = " - " + end_date;
+                }
+
+                form_term.value = 'SHORT';
+                form_day.value = '';
+            }
+
+            var days = {
+                sun: 0,
+                mon: 0,
+                tue: 0,
+                wed: 0,
+                thu: 0,
+                fri: 0,
+                sat: 0
+            };
+            function select_day(day) {
+                var data = '';
+                if (days[day] == 1) {
+                    days[day] = 0;
+                    document.getElementById('day-'+day).className = "";
+                } else {
+                    days[day] = 1;
+                    document.getElementById('day-'+day).className = "selected";
+                }
+                document.getElementById('preview-day').innerHTML = "";
+                if (days.sun == 1) {
+                    document.getElementById('preview-day').innerHTML += "<span class='work'>S</span> ";
+                    data += '1/';
+                } else {
+                    document.getElementById('preview-day').innerHTML += "<span>S</span> ";
+                    data += '0/';
+                }
+                if (days.mon == 1) {
+                    document.getElementById('preview-day').innerHTML += "<span class='work'>M</span> ";
+                    data += '1/';
+                } else {
+                    document.getElementById('preview-day').innerHTML += "<span>M</span> ";
+                    data += '0/';
+                }
+                if (days.tue == 1) {
+                    document.getElementById('preview-day').innerHTML += "<span class='work'>T</span> ";
+                    data += '1/';
+                } else {
+                    document.getElementById('preview-day').innerHTML += "<span>T</span> ";
+                    data += '0/';
+                }
+                if (days.wed == 1) {
+                    document.getElementById('preview-day').innerHTML += "<span class='work'>W</span> ";
+                    data += '1/';
+                } else {
+                    document.getElementById('preview-day').innerHTML += "<span>W</span> ";
+                    data += '0/';
+                }
+                if (days.thu == 1) {
+                    document.getElementById('preview-day').innerHTML += "<span class='work'>T</span> ";
+                    data += '1/';
+                } else {
+                    document.getElementById('preview-day').innerHTML += "<span>T</span> ";
+                    data += '0/';
+                }
+                if (days.fri == 1) {
+                    document.getElementById('preview-day').innerHTML += "<span class='work'>F</span> ";
+                    data += '1/';
+                } else {
+                    document.getElementById('preview-day').innerHTML += "<span>F</span> ";
+                    data += '0/';
+                }
+                if (days.sat == 1) {
+                    document.getElementById('preview-day').innerHTML += "<span class='work'>S</span> ";
+                    data += '1';
+                } else {
+                    document.getElementById('preview-day').innerHTML += "<span>S</span> ";
+                    data += '0';
+                }
+
+                form_day.value = data;
+                document.getElementById('start_date').value = '';
+                document.getElementById('end_date').value = '';
+                form_term.value = 'LONG';
+            }
+
+            function time_change() {
+
+                var start_half = form_start_time.value.indexOf('.');
+                var start_h = "0";
+                var start_m = "00";
+                if (start_half == -1) {
+                    start_h = parseInt(form_start_time.value);
+                } else {
+                    var half = form_start_time.value.split('.');
+                    start_h = parseInt(half[0]);
+                    if (half[1].length == 0) {
+                        start_m = "00";
+                    } else if (half[1].length == 1) {
+                        start_m = half[1]+"0";
+                    } else {
+                        start_m = half[1][0]+half[1][1];
+                    }
+                }
+
+                if (start_h > 12) {
+                    start_h = 12;
+                }
+                if (parseInt(start_m) > 59) {
+                    start_m = "59";
+                }
+
+                var end_half = form_end_time.value.indexOf('.');
+                var end_h = "0";
+                var end_m = "00";
+                if (end_half == -1) {
+                    end_h = parseInt(form_end_time.value);
+                } else {
+                    var half = form_end_time.value.split('.');
+                    end_h = parseInt(half[0]);
+                    if (half[1].length == 0) {
+                        end_m = "00";
+                    } else if (half[1].length == 1) {
+                        end_m = half[1]+"0";
+                    } else {
+                        end_m = half[1][0]+half[1][1];
+                    }
+                }
+
+                if (end_h > 12) {
+                    end_h = 12;
+                }
+                if (parseInt(end_m) > 59) {
+                    end_m = "59";
+                }
+
+                document.getElementById("preview-time").innerHTML = "";
+                document.getElementById("preview-time").innerHTML = start_h + ":" + start_m + " " + start_ampm.value + " - " + end_h + ":" + end_m + " " + end_ampm.value;
+
+                form_start_time.value = start_h + ":" + start_m;
+                form_end_time.value = end_h + ":" + end_m;
+            }
+            /*
+            $('#end_time').change(function() {
+                var start = form_start_time.value;
+                var end = form_end_time.value;
+
+                if (start == "") {
+                    form_start_time.value = end;
+                    start = end;
+                }
+
+                var start_h = parseInt(start[0]+start[1]);
+                var start_m = start[3]+start[4];
+                var start_ampm = "AM";
+                if (start_h > 12) {
+                    start_h = start_h - 12;
+                    start_ampm = "PM";
+                }
+
+                var end_h = parseInt(end[0]+end[1]);
+                var end_m = end[3]+end[4];
+                var end_ampm = "AM";
+                if (end_h > 12) {
+                    end_h = end_h - 12;
+                    end_ampm = "PM";
+                }
+
+                document.getElementById("preview-time").innerHTML = "";
+                document.getElementById("preview-time").innerHTML = start_h + ":" + start_m + " " + start_ampm + " - " + end_h + ":" + end_m + " " + end_ampm;
+            });
+            */
+
+            $('#job-wage').keyup(function () {
+                var wage = document.getElementById('job-wage').value.toString().indexOf('.');
+                var dollar = "0";
+                var cent = "00";
+                if (wage == -1) {
+                    dollar = document.getElementById('job-wage').value;
+                } else {
+                    wage = document.getElementById('job-wage').value.toString().split('.');
+                    dollar = wage[0];
+                    if (wage[1].length == 0) {
+                        cent = "00";
+                    } else if (wage[1].length == 1) {
+                        cent = wage[1]+"0";
+                    } else {
+                        cent = wage[1][0]+wage[1][1];
+                    }
+                }
+                document.getElementById('preview-wage').innerHTML = '<span class="dollar">$</span>'+dollar+'<span class="cent">.'+cent+'</span>';
+                form_wage.value = dollar+cent;
+                console.log(form_wage.value);
+            });
+            $('#every').change(function() {
+                document.getElementById('preview-every').innerHTML = form_every.value;
+            });
+
+            var tags = [];
+            $('#job-tag').keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    var job_tags = document.getElementById('job-tags');
+                    var job_tag = document.getElementById('job-tag');
+                    var preview = document.getElementById('preview-tags');
+                    var input = delete_space(job_tag.value);
+                    if (tags.length == 0) {
+                        job_tags.innerHTML = '';
+                        preview.innerHTML = '';
+                    }
+                    job_tags.innerHTML += '<div class="job-tag-delete" onclick="delete_tag(this)">#'+input+'</div>';
+                    preview.innerHTML += '<div class="tag">#'+input+'</div>';
+                    tags.push(input);
+                    job_tag.value = "";
+
+                    var save = '';
+                    for (var i = 0; i < tags.length; i++) {
+                        if (i != tags.length-1) {
+                            save += tags[i]+'#'
+                        } else {
+                            save += tags[i]
+                        }
+                    }
+                    form_tags.value = save;
+
+                    return false;
+                }
+            });
+            function delete_space(text) {
+                if (text.substring(text.length-1, text.length) == " ") {
+                    return delete_space(text.substring(0, text.length-1));
+                } else {
+                    return text;
+                }
+            }
+            function delete_tag(tag) {
+                if (window.confirm("Delete this tag?")) {
+                    var job_tags = document.getElementById('job-tags');
+                    var preview = document.getElementById('preview-tags');
+                    var new_list = [];
+                    job_tags.innerHTML = "";
+                    preview.innerHTML = "";
+                    for (var i = 0; i < tags.length; i++) {
+                        if (tags[i] != tag.innerHTML.substring(1, tag.innerHTML.length)) {
+                            new_list.push(tags[i]);
+                            job_tags.innerHTML += '<div class="job-tag-delete" onclick="delete_tag(this)">#' + tags[i] + '</div>';
+                            preview.innerHTML += '<div class="tag">#' + tags[i] + '</div>';
+                        }
+                    }
+                    tags = new_list;
+
+                    var save = '';
+                    for (var i = 0; i < tags.length; i++) {
+                        if (i != tags.length-1) {
+                            save += tags[i]+'#'
+                        } else {
+                            save += tags[i]
+                        }
+                    }
+                    form_tags.value = save;
+                }
+            }
+
+
+            function only_campus() {
+                var box = document.getElementById('only-campus');
+                if (form_only_campus.value == 'YES') {
+                    box.innerHTML = "";
+                    form_only_campus.value = "NO";
+                } else {
+                    box.innerHTML = '<div class="checked"></div>';
+                    form_only_campus.value = "YES";
+                }
+            }
+
+            var num_q = 1;
+            var questions = {
+                '1': '',
+                '2': '',
+                '3': '',
+                '4': '',
+                '5': '',
+                '6': '',
+                '7': '',
+                '8': '',
+                '9': '',
+                '10': ''
+            };
+            function add_question() {
+                if (num_q < 10) {
+                    num_q ++;
+                    document.getElementById('new-questions').innerHTML += '<input type="text" class="question" id="question'+num_q+'" onkeyup="enter_question('+num_q+')" placeholder="Question '+num_q+'  (optional)">';
+                    var forms = '';
+                    for (var i = 1; i <= num_q; i ++) {
+                        forms += '<input type="text" class="question" id="question'+i+'" onkeyup="enter_question('+i+')" placeholder="Question '+i+'  (optional)" value="'+questions[''+i]+'">';
+                    }
+                    document.getElementById('new-questions').innerHTML = forms;
+                }
+            }
+            function delete_question() {
+                if (num_q == 1) {
+                    questions['1'] = "";
+                    document.getElementById('question1').value = "";
+                } else if (num_q > 1) {
+                    questions[''+num_q] = "";
+                    num_q --;
+                    var forms = '';
+                    for (var i = 1; i <= num_q; i ++) {
+                        forms += '<input type="text" class="question" id="question'+i+'" onkeyup="enter_question('+i+')" placeholder="Question '+i+'  (optional)" value="'+questions[''+i]+'">';
+                    }
+                    document.getElementById('new-questions').innerHTML = forms;
+                }
+            }
+            function enter_question(q) {
+                questions[''+q] = document.getElementById('question'+q).value;
+                var qs = '';
+                for (var i = 1; i <= num_q; i ++) {
+                    console.log(i+" "+num_q);
+                    if (i == num_q) {
+                        qs += questions[''+i];
+                    } else {
+                        qs += questions[''+i] + '#';
+                    }
+                }
+                form_questions.value = qs;
+                console.log(form_questions);
+            }
+
+
+            load_data();
+
+        </script>
+
+    {% else %}
+        <h1>Application</h1>
+        <div class="row" id="row-description">{{ job['description'] }}</div>
         <div class="row align--left" id="tags">
             {% for tag in job['tags'] %}
                 <div class="tag">#{{ tag['description'] }}</div>
@@ -94,7 +653,6 @@
                 <div class="tag">&nbsp;</div>
             {% endfor %}
         </div>
-        <div class="row" id="row-description">{{ job['description'] }}</div>
         <form method="POST">
         {{ form.csrf_token }}
             {% for question in job['questions'] %}
@@ -105,18 +663,22 @@
             {% else %}
             {% endfor %}
             {% if applied == True %}
-            <div class="row"><input class="submit disabled" id="submit" name="submit" value="Application Submitted" disabled type="submit"></div>
+            <div class="row"><input class="submit disabled" id="submit" value="Application Submitted" disabled type="submit"></div>
             {% else %}
             <div class="row">{{ form.submit(class_='submit') }}</div>
             {% endif %}
         </form>
+
+        <script>
+            document.getElementById('menu-search').style.color = '#E55A5A';
+            document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg">Search Job';
+        </script>
+    {% endif %}
+
     </div>
 
 </div>
 
-<script>
-document.getElementById('menu-search').style.color = '#E55A5A';
-document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg">Search Job';
-</script>
+
 
 {% endblock %}
