@@ -84,7 +84,9 @@
                 <div class="bar"></div>
             </div>
         </div>
-
+        {% if employer == True %}
+        <a href="/job/{{ job['id'] }}/applications"><div id="view-applications" class="box shadow hover">View Applications<div class="new">{{ num_applications }}</div></div></a>
+        {% endif %}
     </div>
     <div class="column-right align--center shadow">
 
@@ -655,14 +657,19 @@
         </div>
         <form method="POST">
         {{ form.csrf_token }}
+            <div id="apply-questions">
             {% for question in job['questions'] %}
             <div class="row">
                 <div class="question">{{ question['question'] }}</div>
-                <div class="answer"><textarea id="answer{{ question['num'] }}" name="answer{{ question['num'] }}" placeholder="Answer" rows="5"></textarea></div>
+                <div class="answer"><textarea id="answer{{ question['num'] }}" name="answer{{ question['num'] }}" onkeyup="answer('{{ question.num }}')" placeholder="Answer" rows="5"></textarea></div>
             </div>
             {% else %}
             {% endfor %}
-            {% if applied == True %}
+            </div>
+            {{ form.answers() }}
+            {% if expired == True %}
+            <div class="row"><input class="submit disabled" id="submit" value="Job Expired" disabled type="submit"></div>
+            {% elif applied == True %}
             <div class="row"><input class="submit disabled" id="submit" value="Application Submitted" disabled type="submit"></div>
             {% else %}
             <div class="row">{{ form.submit(class_='submit') }}</div>
@@ -672,6 +679,33 @@
         <script>
             document.getElementById('menu-search').style.color = '#E55A5A';
             document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg">Search Job';
+
+            var job_answers = [];
+
+            function init(num) {
+                num = num.length;
+                for (var i = 0; i < num; i++) {
+                    job_answers.push(' ');
+                }
+                var ans = '';
+                for (var i = 0; i < job_answers.length; i++) {
+                    ans += job_answers[i] + '#';
+                }
+                document.getElementById('answers').value = ans;
+                console.log(ans);
+            }
+            init({{ job.num_questions }});
+
+            function answer(num) {
+                job_answers[parseInt(num)-1] = document.getElementById('answer'+num).value;
+                var ans = '';
+                for (var i = 0; i < job_answers.length; i++) {
+                    ans += job_answers[i] + '#';
+                }
+                document.getElementById('answers').value = ans;
+                console.log(ans);
+            }
+
         </script>
     {% endif %}
 

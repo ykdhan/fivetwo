@@ -27,7 +27,7 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 2rem;
-    overflow: hidden;
+    overflow-y: auto;
 }
 #page-job .column-right {
     height: 100vh;
@@ -42,9 +42,24 @@
 
 #page-job .job {
     cursor: default;
+    margin-bottom: 1rem;
 }
 #page-job .job:hover {
     transform: none;
+}
+#page-job #view-applications {
+    width: 12rem;
+    padding: 0.8rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border-radius: 100rem;
+    font-weight: 500;
+    font-family: 'Questrial', sans-serif;
+    text-align: left;
+}
+#page-job #view-applications .new {
+    color: #E55A5A;
+    float: right;
 }
 
 
@@ -265,7 +280,6 @@
 #page-job .job-tag-delete:hover {
     color: #E55A5A;
 }
-
 #page-job #submit {
     width: 26rem;
     margin-top: 1.5rem;
@@ -281,15 +295,7 @@
     background: #fff;
 }
 
-#page-job #tags {
-    margin-bottom: 8rem;
-}
-#page-job #tags .tag {
-    display: inline;
-    font-size: 0.9rem;
-    margin-right: 0.6rem;
-    font-weight: 600;
-}
+
 #page-job #row-money {
     margin-bottom: 2.3rem;
 }
@@ -297,4 +303,181 @@
     margin-top: 2rem;
     margin-bottom: 2rem;
     text-align: left;
+}
+#page-job #apply-questions {
+    margin-top: 6rem;
+}
+#page-job #tags {
+
+}
+#page-job #tags .tag {
+    display: inline;
+    font-size: 0.8rem;
+    margin-right: 0.6rem;
+    font-weight: 600;
+}
+
+
+
+#page-job-applications {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0 auto;
+    min-height: 100%;
+    background: rgb(229,90,90);
+    background: -moz-linear-gradient(left,  rgba(229,90,90,0.85) 0%, rgba(255,165,57,0.85) 100%);
+    background: -webkit-linear-gradient(left,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
+    background: linear-gradient(to right,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e55a5a', endColorstr='#ffa539',GradientType=1 );
+    vertical-align: middle;
+}
+#page-job-applications h1 {
+    color: #fff;
+    padding-top: 2rem;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+}
+#page-job-applications #applications {
+    padding: 1rem;
+    margin: 0 auto;
+    background: none;
+}
+ #page-job-applications .empty-list {
+    margin: 1rem;
+    color: #eee !important;
+}
+#page-job-applications .div-application {
+    display: inline-block;
+    vertical-align: top;
+    width: 50%;
+}
+#page-job-applications .application {
+    padding: 0;
+    margin: 1rem;
+    height: auto;
+    max-width: 40rem;
+}
+#page-job-applications .section-profile {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 0;
+}
+#page-job-applications .section-profile .left {
+    text-align: center;
+    vertical-align: top;
+}
+#page-job-applications .section-profile .right {
+    text-align: left;
+    padding: 1rem;
+    padding-left: 0;
+    vertical-align: top;
+}
+#page-job-applications .section-profile .info {
+    margin-top: 0.5rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.8rem;
+}
+#page-job-applications .section-profile .picture {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    padding: 0;
+    margin: 2rem auto;
+    margin-bottom: 1rem;
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+    background-image: url('/static/img/profile.svg');
+}
+#page-job-applications .section-profile .name {
+    font-family: 'Questrial', sans-serif;
+    padding: 0 0.5rem;
+    margin-bottom: 2rem;
+}
+#page-job-applications .section-profile .div-status {
+    float: left;
+    padding: 0.7rem;
+}
+#page-job-applications .section-profile .status {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: #FFA539;
+}
+#page-job-applications .section-profile .status.accepted {
+    background: #E55A5A;
+}
+#page-job-applications .section-profile .status.declined {
+    background: #7a7a7a;
+}
+#page-job-applications .section-form {
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+    background: #f4f4f4;
+    border-radius: 0.25rem;
+    margin: 0.5rem;
+}
+#page-job-applications .section-form .question {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding: 0 1rem;
+    text-align: left;
+}
+#page-job-applications .section-form .answer {
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+    text-align: left;
+}
+#page-job-applications .section-control {
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+    text-align: center;
+}
+#page-job-applications button {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 45%;
+}
+#page-job-applications .decline {
+    margin-left: 0.5rem;
+}
+
+
+
+
+
+
+@media all and (min-width: 1400px) {
+
+}
+
+@media all and (max-width: 800px) {
+
+#page-job {
+    width: 100%;
+    height: 100%;
+    display: block;
+    padding: 0;
+    margin: 0;
+}
+#page-job .column-left {
+    height: auto;
+    max-height: none;
+    padding: 2rem;
+    overflow-y: auto;
+}
+#page-job .column-right {
+    height: auto;
+    max-height: none;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+
+}
+
+@media all and (max-width: 600px) {
+
 }

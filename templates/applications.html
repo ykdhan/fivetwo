@@ -92,7 +92,13 @@
         </div><div class="div-application">
             <div class="application shadow">
                 <div class="div-status">
-                    <div class="status">Submitted</div>
+                    {% if a['status'] == 'PENDING' %}
+                    <div class="status">{{ a['status'] }}</div>
+                    {% elif a['status'] == 'ACCEPTED' %}
+                    <div class="status accepted">{{ a['status'] }}</div>
+                    {% elif a['status'] == 'DECLINED' %}
+                    <div class="status declined">{{ a['status'] }}</div>
+                    {% endif %}
                     <div class="application-date">{{ a['date'] }}</div>
                 </div>
                 {% for q in a['questions'] %}

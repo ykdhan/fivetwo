@@ -5,6 +5,7 @@
 {% block content %}
 
 <div id="div-search" class="shadow align--left">
+    <div id="div-search-box">
     <input type="text" id="input-search" placeholder="Search"><img class="icon" alt="" src="/static/img/icon-search.svg">
     <select>
         <option selected disabled>Payment</option>
@@ -19,11 +20,12 @@
         <option>Long</option>
         <option>Short</option>
     </select><img class="icon" alt="" src="/static/img/icon-arrow-down.svg">
+    </div>
 </div>
 
 <div id="jobs" class="align--left">
     {% for job in jobs %}<div class="div-job">
-    <div class="job shadow hover-small">
+    <div class="job shadow">
         <a href="/job/{{ job['id'] }}">
         <div class="profile align--left">
             {% if job['user']['picture'] != 'NO' %}
@@ -106,7 +108,7 @@
 
 <script>
 document.getElementById('menu-search').style.color = '#E55A5A';
-document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg">Search Job';
+document.getElementById('menu-search').innerHTML = '<img alt="" src="/static/img/icon-search.svg"><div class="menu-word now">Search Job</div></div>';
 
 $('#input-search').keydown(function(event){
     if(event.keyCode == 13) {

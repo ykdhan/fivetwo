@@ -373,6 +373,9 @@ def job(job_id):
     today = datetime.datetime.today()
 
     applied = db.job_applied(job_id,current_user.id)
+    expired = db.job_expired(job_id)
+
+    num_applications = len(db.pending_applications(job_id))
 
     j = db.job(job_id)
 
@@ -442,6 +445,7 @@ def job(job_id):
 
     job['tags'] = tags
     job['questions'] = questions
+    job['num_questions'] = len(questions)
 
     if employer:
         prev_tags = ''
@@ -537,19 +541,132 @@ def job(job_id):
         job_form = JobForm()
 
         if job_form.validate_on_submit():
-            answers = []
-            for a in job_form.answers.data.split('#'):
-                answers.append(a)
 
-            print(answers)
-            rowcount = db.apply_job(current_user.id, job_id, answers)
+            #answers = []
+            #for a in job_form.answers.data.split('#'):
+            #    answers.append(a)
+
+            print(job_form.answers.data)
+            rowcount = db.apply_job(current_user.id, job_id, job_form.answers.data)
 
             if rowcount == 1:
                 return redirect(url_for('applications'))
             else:
                 flash("Error: Cannot apply.")
 
-    return render_template('job.html', job=job, form=job_form, today=today, applied=applied, employer=employer)
+    return render_template('job.html', job=job, form=job_form, today=today, applied=applied, expired=expired, employer=employer, num_applications=num_applications)
+
+
+@app.route('/job/<job_id>/applications', methods=["GET", "POST"])
+def job_applications(job_id):
+    job_applications = db.job_applications(job_id)
+    print(job_applications)
+    outputs = []
+    for a in job_applications:
+        application = {}
+        user = db.user(a['user_id'])
+        application['status'] = a['status']
+        application['id'] = a['id']
+        application['date'] = datetime.datetime.strptime(a['apply_date'], '%Y-%m-%d %H:%M:%S').strftime("%b %d, %Y")
+        application['user'] = {}
+        application['user']['name'] = user['name']
+        application['user']['picture'] = user['profile_picture']
+        application['user']['gender'] = user['gender']
+        application['user']['introduction'] = user['introduction']
+        application['user']['contact'] = user['contact']
+        application['user']['email'] = user['email']
+        application['user']['age'] = ''
+        if user['date_of_birth'] != None and user['date_of_birth'] != "":
+            birth = datetime.datetime.strptime(user['date_of_birth'], '%Y-%m-%d')
+            today = datetime.datetime.today()
+            age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+            application['user']['age'] = age
+        application['user']['picture'] = user['profile_picture']
+        application['user']['is_campus'] = user['is_campus']
+        if user['is_campus'] == 'YES':
+            application['user']['is_student'] = user['is_student']
+            if user['is_student'] == 'YES':
+                application['user']['major'] = user['major']
+                application['user']['year'] = user['class_year']
+            else:
+                application['user']['department'] = user['department']
+                application['user']['position'] = user['position']
+        questions = []
+        num = 0
+        for i in db.job_questions(job_id):
+            q = {}
+            q['question'] = i['question']
+            q['answer'] = db.job_answers(a['id'])[num]['answer']
+            questions.append(q)
+            num += 1
+        application['questions'] = questions
+        outputs.append(application)
+    print(outputs)
+
+    return render_template('job-applications.html', applications=outputs)
+
+
+@app.route('/accept/<application_id>', methods=['POST'])
+def accept(application_id):
+
+    # check if inputs are valid
+
+    accept = db.accept(application_id)
+
+    if accept == 1:
+        a = db.application(application_id)
+
+        title = "Your application has been accepted."
+        message = "Dear " + a['name'] + ",\r\n\r\nCongratulations!" + \
+                  "\r\nYour application has been reviewed and accepted by your employer." + \
+                  "\r\nYou will soon receive a call or email from your employer for more details." + \
+                  "\r\nThank you for using FiveTwo." \
+                  "\r\n\r\nSincerely," + "\r\nFiveTwo Co."
+        html = '''
+            <!DOCTYPE html><html lang="en-us"><head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+            <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500" rel="stylesheet">
+            <title></title>
+            <style>
+            body { width: 100%; height: 100%; background: none; padding: 0; margin: 0;
+                font-size: 0.9rem; font-family: 'Quicksand', sans-serif; font-weight: 500;
+                color: #474747; text-align: center; line-height: 1.5; }
+            p { margin: 0; padding: 0; margin-bottom: 0.5rem; text-align: left; }
+            button {
+                font-size: 0.9rem; font-family: 'Questrial', sans-serif;font-weight: 500;
+                width: auto; cursor: pointer; background: #fff;
+                border: 0.06rem solid #E55A5A; border-radius: 0.25rem; color: #E55A5A;
+                padding: 0.6rem 1rem; margin: 0; margin-bottom: 1rem; }
+            button:hover { background: #E55A5A; color: #fff; }
+            #frame { width: 100%; max-width: 400px; margin: 3rem auto; }
+            #logo { width: 3.6rem; height: auto; }
+            #dear { margin-top: 2.5rem; margin-bottom: 2.5rem; } 
+            #end-message { margin-top: 2.5rem;}        
+            #note { margin-top: 2rem; color: #cecece; font-size: 0.7rem; }
+            </style>
+            </head><body><div id="frame"><img id="logo" alt="FIVETWO" src="https://fivetwo.co/static/img/fivetwo.svg">
+            <p id="dear">Dear ''' + a['name'] + ''',</p><p>Congratulations!</p><p>Your application has been reviewed and accepted by your employer.</p>
+            <p>You will soon receive a call or email from your employer for more details.</p>
+            <p>To review your application, please click the button below.</p>
+            <p><a href="https://fivetwo.co/applications"><button>Review Application</button></a></p>
+            <p>Thank you for using FiveTwo!</p>
+            <p id="note">Note: This is not the end of application process. Your employer will direct you to the next steps.</p>
+            </div></body></html>
+            '''
+        send_email([a['email']], title, message, html)
+    return jsonify(accept)
+
+
+@app.route('/decline/<application_id>', methods=['POST'])
+def decline(application_id):
+
+    # check if inputs are valid
+
+    decline = db.decline(application_id)
+
+    return jsonify(decline)
 
 
 @app.route('/new', methods=["GET", "POST"])
@@ -685,7 +802,8 @@ def posts():
         tags = db.job_tags(job['id'])
 
         job['tags'] = tags
-        job['num_applications'] = len(db.job_applications(j['id']))
+        job['num_applications'] = len(db.pending_applications(j['id']))
+        job['expired'] = j['expired']
         outputs.append(job)
     return render_template('posts.html', jobs=outputs)
 
@@ -771,6 +889,7 @@ def applications():
             num += 1
         apply['questions'] = questions
         apply['job'] = job
+        apply['status'] = a['status']
         apply['date'] = datetime.datetime.strptime(a['created_at'], '%Y-%m-%d %H:%M:%S').strftime("%b %d, %Y")
 
         outputs.append(apply)
@@ -852,10 +971,9 @@ def verify(user_id):
                                    signup_form.birth.data,
                                    None, None, None, None)
         if rowcount == 1:
-            if authenticate_id(user_id):
-                user = User(authenticate_id(user_id))
-                login_user(user)
-                return redirect(url_for('index'))
+            user = User(db.user(user_id)['email'])
+            login_user(user)
+            return redirect(url_for('index'))
             flash("Error: Cannot authenticate.")
         else:
             flash("Error: Cannot verify.")

@@ -44,7 +44,7 @@
 
 <header class="shadow">
     <section>
-        <div class="align--middle align--center"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
+        <div class="align--center align--vertical"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
         <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
     </section>
 {% if login == True %}
@@ -69,13 +69,13 @@
     </section>
 {% elif not_registered == True %}
 {% else %}
-    <section>
-        <a href="{{ url_for('index') }}"><div class="menu" id="menu-search"><img alt="" src="/static/img/icon-search-gray.svg">Search Job</div></a>
-        <a href="{{ url_for('new') }}"><div class="menu" id="menu-new"><img alt="" src="/static/img/icon-add-gray.svg">Post Job</div></a>
-        <a href="{{ url_for('posts') }}"><div class="menu" id="menu-posts"><img alt="" src="/static/img/icon-jobs-gray.svg">My Posts</div></a>
-        <a href="{{ url_for('applications') }}"><div class="menu" id="menu-applications"><img alt="" src="/static/img/icon-edit-gray.svg">My Applications</div></a>
+    <section id="menus" class="align--vertical">
+        <a href="{{ url_for('index') }}"><div class="menu" id="menu-search"><img alt="" src="/static/img/icon-search-gray.svg"><div class="menu-word">Search Job</div></div></a>
+        <a href="{{ url_for('new') }}"><div class="menu" id="menu-new"><img alt="" src="/static/img/icon-add-gray.svg"><div class="menu-word">Post Job</div></div></a>
+        <a href="{{ url_for('posts') }}"><div class="menu" id="menu-posts"><img alt="" src="/static/img/icon-jobs-gray.svg"><div class="menu-word">My Posts</div></div></a>
+        <a href="{{ url_for('applications') }}"><div class="menu" id="menu-applications"><img alt="" src="/static/img/icon-edit-gray.svg"><div class="menu-word">My Applications</div></div></a>
     </section>
-    <section class="align--left align--vertical">
+    <section id="profile-section" class="align--left align--vertical">
         <div id="profile" class="align--left">
             <a href="{{ url_for('profile') }}">
             {% if current_user.picture != 'NO' %}

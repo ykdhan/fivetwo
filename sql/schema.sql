@@ -5,10 +5,10 @@ CREATE TABLE user
   email           TEXT NOT NULL,
   password        TEXT NOT NULL,
   name            TEXT NOT NULL,
-  gender          TEXT NULL,
-  contact         TEXT NULL,
+  gender          TEXT DEFAULT '',
+  contact         TEXT DEFAULT '',
   date_of_birth   DATE NULL,
-  introduction    TEXT NULL,
+  introduction    TEXT DEFAULT '',
   profile_picture TEXT DEFAULT 'NO',
   is_campus       TEXT DEFAULT 'NO',
   is_registered   TEXT DEFAULT 'NO',
@@ -46,7 +46,7 @@ CREATE TABLE job
   money          INTEGER NOT NULL,
   every          TEXT NOT NULL,
   only_campus   TEXT DEFAULT 'NO',
-  accepted       INTEGER REFERENCES application (id) DEFAULT 0,
+  expired       TEXT DEFAULT 'NO',
   created_at     DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -56,6 +56,7 @@ CREATE TABLE application
   id               INTEGER PRIMARY KEY, /* random */
   user_id          INTEGER REFERENCES user (id),
   job_id           INTEGER REFERENCES job (id),
+  status           TEXT DEFAULT 'PENDING',
   created_at     DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -64,6 +65,7 @@ CREATE TABLE job_tag
 (
   job_id         INTEGER REFERENCES job (id),
   tag_id         INTEGER REFERENCES tag (id),
+  num             INTEGER NOT NULL,
   created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (job_id, tag_id)
 );

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}52CO{% endblock %}
+
+{% block content %}
+
+<div id="page-job-applications" class="align--center">
+
+<h1>Applications</h1>
+
+<div id="applications" class="align--left">
+
+    <div class="div-application">
+    {% for a in applications %}<div class="box shadow application">
+        <div class="section-profile">
+            <div class="left">
+                <div class="div-status">
+                    {% if a.status == 'PENDING' %}
+                    <div class="status"></div>
+                    {% elif a.status == 'ACCEPTED' %}
+                    <div class="status accepted"></div>
+                    {% elif a.status == 'DECLINED' %}
+                    <div class="status declined"></div>
+                    {% endif %}
+                </div>
+                {% if a.user.picture != 'NO' %}
+                    <div class="picture" style="background-image: url('/static/profiles/{{ a.user.picture }}');"></div>
+                {% else %}
+                    <div class="picture"></div>
+                {% endif %}
+                <div class="name">{{ a.user.name }}</div>
+            </div>
+            <div class="right">
+                <div class="info">{{ a.user.email }}</div>
+                {% if a.user.contact != '' %}
+                    <div class="info">{{ a.user.contact }}</div>
+                {% endif %}
+                {% if a.user.age != '' %}
+                    <div class="info">{{ a.user.age }} years old</div>
+                {% endif %}
+                {% if a.user.is_campus == 'YES' %}
+                    {% if a.user.is_student == 'YES' %}
+                        <div class="info">{{ a.user.major }}</div>
+                        <div class="info">{{ a.user.year }}</div>
+                    {% else %}
+                        <div class="info">{{ a.user.department }}</div>
+                        <div class="info">{{ a.user.position }}</div>
+                    {% endif %}
+                {% endif %}
+                {% if a.user.introduction != '' %}
+                    <div class="info">{{ a.user.introduction }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% if q in a.questions != [] %}
+            <div class="section-form">
+            {% for q in a.questions %}
+                <div class="question">{{ q.question }}</div>
+                <div class="answer">{{ q.answer }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+        {% if a.status == 'PENDING' %}
+            <div class="section-control" id="control-{{ a.id }}"><button type="button" onclick="accept('{{ a.id }}')">Accept</button><button type="button" class="decline" onclick="decline('{{ a.id }}')">Decline</button></div>
+        {% endif %}
+    </div>
+    </div>{% else %}
+        <div class="empty-list">There is no application.</div>
+    {% endfor %}
+
+</div>
+
+
+
+
+
+</div>
+
+
+<script>
+    document.getElementById('menu-posts').style.color = '#E55A5A';
+    document.getElementById('menu-posts').innerHTML = '<img alt="" src="/static/img/icon-jobs.svg">My Posts';
+
+
+    function accept(a) {
+        if(window.confirm('Would you like to ACCEPT this application?')) {
+            $.ajax({
+                url: "/accept/"+a,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    console.log(data);
+                    if (data == 1) {
+                        window.location.href = "";
+                    } else {
+                        alert("Error: "+data);
+                    }
+                }
+            });
+        }
+    }
+    function decline(a) {
+        if(window.confirm('Would you like to DECLINE this application?')) {
+            $.ajax({
+                url: "/decline/"+a,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    console.log(data);
+                    if (data == 1) {
+                        window.location.href = "";
+                    } else {
+                        alert("Error: "+data);
+                    }
+                }
+            });
+        }
+    }
+
+
+</script>
+
+
+{% endblock %}

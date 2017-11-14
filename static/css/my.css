@@ -23,11 +23,19 @@
     margin: 0 auto;
     background: none;
 }
+#page-posts .job {
+    background: #fff;
+    border-radius: 0.5rem;
+    width: 15rem;
+    height: 21rem;
+    margin: 0.5rem auto;
+    cursor: pointer;
+}
 #page-posts .post {
     background: #fff;
     border-radius: 0.5rem;
     width: 15rem;
-    height: 11rem;
+    height: 16rem;
     margin: 0.5rem auto;
     cursor: pointer;
 }
@@ -69,17 +77,23 @@
     margin-top: 0.5em;
 }
 #page-posts .bottom {
-    padding: 0.8rem;
-    padding-top: 0;
-    margin-top: -0.3rem;
+    padding: 0.7rem 1rem;
+    margin-top: 0.2rem;
+    border-top: 0.06rem solid #cecece;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 #page-posts .bottom .status {
     float: left;
     text-align: left;
 }
-#page-posts .bottom .applications {
+#page-posts .bottom .status.expired {
+    color: #aaa;
+}
+#page-posts .bottom .pending {
     float: right;
     text-align: right;
+    color: #FFA539;
 }
 
 
@@ -139,6 +153,13 @@
     display: inline-block;
     padding: 1rem;
     text-align: left;
+    color: #FFA539;
+}
+#page-applications .status.accepted {
+    color: #E55A5A;
+}
+#page-applications .status.declined {
+    color: #7a7a7a;
 }
 #page-applications .application-date {
     display: inline-block;

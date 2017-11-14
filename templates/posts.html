@@ -13,7 +13,11 @@
         <a href="/job/{{ job['id'] }}">
         <div class="job shadow hover-small">
             <div class="profile align--left">
+                {% if current_user.picture != 'NO' %}
+                <div class="picture align--middle" style="background-image: url('/static/profiles/{{ current_user.picture }}');"></div>
+                {% else %}
                 <div class="picture align--middle"></div>
+                {% endif %}
                 <div class="info align--middle">
                     <div class="user font--main font--black align--left">{{ job['user']['name'] }}</div>
                     <div class="date font--main align--left">{{ job['created_at'] }}</div>
@@ -79,7 +83,11 @@
                 {% endfor %}
             </div>
             <div class="bottom">
-                <span class="status font--yellow">Posted</span><span class="applications">{{ job['num_applications'] }}</span>
+                {% if job['expired'] == 'NO' %}
+                <span class="status">POSTED</span><span class="pending">{{ job['num_applications'] }}</span>
+                {% else %}
+                <span class="status expired">EXPIRED</span><span class="pending"></span>
+                {% endif %}
             </div>
         </div></a>
         </div>{% else %}

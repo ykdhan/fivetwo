@@ -35,15 +35,15 @@ INSERT INTO tag (id, description)
 
 /* Job Tag */
 
-INSERT INTO job_tag (job_id, tag_id)
-    VALUES (12345555, 41239950);
-INSERT INTO job_tag (job_id, tag_id)
-    VALUES (12345555, 58473987);
-INSERT INTO job_tag (job_id, tag_id)
-    VALUES (41235555, 20958829);
-INSERT INTO job_tag (job_id, tag_id)
-    VALUES (41235555, 69283943);
-INSERT INTO job_tag (job_id, tag_id)
-    VALUES (41235555, 59183958);
-INSERT INTO job_tag (job_id, tag_id)
-    VALUES (12345555, 59183958);
+INSERT INTO job_tag (job_id, tag_id, num)
+    VALUES (12345555, 41239950, 1);
+INSERT INTO job_tag (job_id, tag_id, num)
+    VALUES (12345555, 58473987, 2);
+INSERT INTO job_tag (job_id, tag_id, num)
+    VALUES (41235555, 20958829, 1);
+INSERT INTO job_tag (job_id, tag_id, num)
+    VALUES (41235555, 69283943, 2);
+INSERT INTO job_tag (job_id, tag_id, num)
+    VALUES (41235555, 59183958, 3);
+INSERT INTO job_tag (job_id, tag_id, num)
+    VALUES (12345555, 59183958, 3);
