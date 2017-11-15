@@ -147,7 +147,7 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
     grid-gap: 0;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 #page-applications .status {
     display: inline-block;
@@ -361,4 +361,46 @@
     #page-profile #sign-out-word {
         display: none;
     }
+
+    #page-applications .div-form {
+        display: block;
+    }
+    #page-applications .div-job {
+        vertical-align: top;
+        text-align: center;
+    }
+    #page-applications .job {
+        margin: 0.5rem auto;
+        background: #f4f4f4;
+    }
+    #page-applications .div-application {
+        display: block;
+        text-align: center;
+    }
+    #page-applications .application {
+        min-height: 3rem;
+        margin: 0.5rem auto;
+        margin-top: -16.7rem;
+        margin-bottom: 2rem;
+        padding-top: 16.2rem;
+        width: 17rem;
+        text-align: left;
+    }
+    #page-applications .div-status {
+        display: grid;
+        margin-bottom: 1rem;
+    }
+    #page-applications .status {
+        padding: 1rem;
+    }
+    #page-applications .application-date {
+        padding: 1rem;
+    }
+    #page-applications .questions {
+        padding: 2rem;
+        padding-top: 0;
+    }
+
+
+
 }

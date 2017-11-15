@@ -150,7 +150,7 @@ def login():
                     font-size: 0.9rem; font-family: 'Questrial', sans-serif;font-weight: 500;
                     width: auto; cursor: pointer; background: #fff;
                     border: 0.06rem solid #E55A5A; border-radius: 0.25rem; color: #E55A5A;
-                    padding: 0.6rem 1rem; margin: 0; margin-bottom: 1rem; }
+                    padding: 0.6rem 1rem; margin: 0; margin-top: 0.8rem; margin-bottom: 1rem; }
                 button:hover { background: #E55A5A; color: #fff; }
                 #frame { width: 100%; max-width: 400px; margin: 3rem auto; }
                 #logo { width: 3.6rem; height: auto; }
@@ -280,19 +280,15 @@ def index():
             end_hour -= 12
             end_ampm = "PM"
 
-        if start_ampm == end_ampm:
-            job['start_time'] = str(start_hour) + ":" + start_minute
-            job['end_time'] = str(end_hour) + ":" + end_minute + " " + end_ampm
-        else:
-            job['start_time'] = str(start_hour) + ":" + start_minute + " " + start_ampm
-            job['end_time'] = str(end_hour) + ":" + end_minute + " " + end_ampm
+        job['start_time'] = str(start_hour) + ":" + start_minute + " " + start_ampm
+        job['end_time'] = str(end_hour) + ":" + end_minute + " " + end_ampm
 
         job['money'] = str(j['money'])
         job['every'] = j['every']
         create_day = int(datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d'))
         create_month = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%b')
         create_year = datetime.datetime.strptime(j['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%Y')
-        job['created_at'] = create_month + " " + str(create_day) + ", " + create_year
+        job['created_at'] = create_month + " " + str(create_day) # + ", " + create_year
 
         tags = db.job_tags(job['id'])
 
@@ -638,7 +634,7 @@ def accept(application_id):
                 font-size: 0.9rem; font-family: 'Questrial', sans-serif;font-weight: 500;
                 width: auto; cursor: pointer; background: #fff;
                 border: 0.06rem solid #E55A5A; border-radius: 0.25rem; color: #E55A5A;
-                padding: 0.6rem 1rem; margin: 0; margin-bottom: 1rem; }
+                padding: 0.6rem 1rem; margin: 0; margin-top: 0.8rem; margin-bottom: 1rem; }
             button:hover { background: #E55A5A; color: #fff; }
             #frame { width: 100%; max-width: 400px; margin: 3rem auto; }
             #logo { width: 3.6rem; height: auto; }

@@ -728,19 +728,19 @@ body {
 }
 
 #jobs {
-    padding-top: 7rem;
+    padding-top: 8rem;
 }
 .div-job {
     width: 100%;
 }
 .job {
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
 }
 #jobs .job {
-    transform: scale(1.06);
+    transform: scale(1.07);
 }
 #jobs .job:hover {
-    transform: scale(1.08);
+    transform: scale(1.09);
 }
 
 
