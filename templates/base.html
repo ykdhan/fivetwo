@@ -42,17 +42,21 @@
 </head>
 <body class="animated fadeIn">
 
-<header class="shadow">
-    <section>
-        <div class="align--center align--vertical"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
-        <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
-    </section>
+
 {% if login == True %}
     <style>
         body {
             grid-template-columns: 22rem 1fr !important;
         }
+        #page {
+            margin-top: 0;
+        }
     </style>
+<header class="shadow" id="login-header">
+    <section>
+        <div class="align--center align--vertical"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
+        <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
+    </section>
     <section id="section-login" class="align--center">
         <div class="tag font--main align--left">Campus</div>
         <a href="/cas/login"><button class="submit" type="button">Log In as Student/Faculty</button></a>
@@ -61,14 +65,27 @@
         {{ login_form.csrf_token }}
         {{ login_form.email(placeholder="Email Address") }}<br>
         {{ login_form.password(placeholder="Password") }}<br>
-        {{ login_form.login_submit() }}
+        {{ login_form.login_submit() }}<br>
+            <div class="back">
+            <a href="#div-sign-up"><button type="button">Sign Up</button></a>
+            </div>
         </form>
     </section>
-    <section class="align--left align--vertical">
-        &copy; 2017
+    <section class="align--center align--vertical">
+        <div id="copyright">BETA &copy; 2017</div>
     </section>
 {% elif not_registered == True %}
+<header class="shadow" id="header">
+    <section>
+        <div class="align--center align--vertical"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
+        <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
+    </section>
 {% else %}
+<header class="shadow" id="header">
+    <section>
+        <div class="align--center align--vertical"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
+        <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
+    </section>
     <section id="menus" class="align--vertical">
         <a href="{{ url_for('index') }}"><div class="menu" id="menu-search"><img alt="" src="/static/img/icon-search-gray.svg"><div class="menu-word">Search Job</div></div></a>
         <a href="{{ url_for('new') }}"><div class="menu" id="menu-new"><img alt="" src="/static/img/icon-add-gray.svg"><div class="menu-word">Post Job</div></div></a>

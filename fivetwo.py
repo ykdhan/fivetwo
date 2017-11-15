@@ -142,7 +142,7 @@ def login():
                 <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500" rel="stylesheet">
                 <title></title>
                 <style>
-                body { width: 100%; height: 100%; background: none; padding: 0; margin: 0;
+                body { width: 100%; height: 100%; background: none; padding: 1rem; margin: 0;
                     font-size: 0.9rem; font-family: 'Quicksand', sans-serif; font-weight: 500;
                     color: #474747; text-align: center; line-height: 1.5; }
                 p { margin: 0; padding: 0; margin-bottom: 0.5rem; text-align: left; }
@@ -630,7 +630,7 @@ def accept(application_id):
             <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500" rel="stylesheet">
             <title></title>
             <style>
-            body { width: 100%; height: 100%; background: none; padding: 0; margin: 0;
+            body { width: 100%; height: 100%; background: none; padding: 1rem; margin: 0;
                 font-size: 0.9rem; font-family: 'Quicksand', sans-serif; font-weight: 500;
                 color: #474747; text-align: center; line-height: 1.5; }
             p { margin: 0; padding: 0; margin-bottom: 0.5rem; text-align: left; }
@@ -953,7 +953,7 @@ def sign_up():
         else:
             flash("Error: Cannot sign up.")
 
-    return render_template('sign-up.html', signup_form=signup_form, is_campus=is_campus)
+    return render_template('sign-up.html', signup_form=signup_form, is_campus=is_campus, not_registered=True)
 
 
 @app.route('/verify/<user_id>', methods=["GET", "POST"])
@@ -978,7 +978,7 @@ def verify(user_id):
         else:
             flash("Error: Cannot verify.")
 
-    return render_template('verify.html', signup_form=signup_form)
+    return render_template('verify.html', signup_form=signup_form, not_registered=True)
 
 
 @app.route('/profile', methods=["GET", "POST"])

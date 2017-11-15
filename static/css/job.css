@@ -40,6 +40,10 @@
     overflow-y: auto;
 }
 
+#page-job select {
+    padding: 0.49rem 0 0.55rem 1rem !important;
+}
+
 #page-job .job {
     cursor: default;
     margin-bottom: 1rem;
@@ -66,6 +70,8 @@
 #page-job .row {
     margin: 0 auto 2rem auto;
     width: 26rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 #page-job textarea, #page-job input {
@@ -262,11 +268,11 @@
     width: 23rem;
     margin-top: -2rem;
     background: none;
+    z-index: 5;
 }
 #page-job #job-tags {
     display: inline-block;
     min-height: 1.8rem;
-    background: #fff;
     width: 26rem;
     text-align: left;
 }
@@ -455,12 +461,20 @@
 
 @media all and (max-width: 800px) {
 
+
+#page-job-applications {
+    padding-top: 1rem;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
 #page-job {
     width: 100%;
     height: 100%;
     display: block;
     padding: 0;
     margin: 0;
+    padding-top: 1rem;
 }
 #page-job .column-left {
     height: auto;
@@ -476,8 +490,275 @@
 }
 
 
+
+
+
+
 }
 
 @media all and (max-width: 600px) {
+
+
+#page-job .row {
+    margin: 0 auto 2rem auto;
+    width: 19rem;
+}
+#page-job textarea, #page-job input {
+    width: 17rem;
+}
+
+#page-job .tab {
+    padding: 0.6rem 1rem;
+    margin: 0;
+    width: 9.5rem;
+    font-size: 0.8rem;
+}
+#page-job .tab:last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+#page-job .tab-now {
+    border: 0.06rem solid #E55A5A !important;
+    color: #E55A5A;
+}
+#page-job .tab-content {
+    width: 100%;
+    margin: 0;
+}
+#page-job .tab-content #start_date, #page-job .tab-content #end_date {
+    width: 9.25rem;
+    margin: 0;
+    margin-right: 0.25rem;
+}
+#page-job .tab-content #end_date {
+    margin: 0;
+    margin-left: 0.25rem;
+}
+#page-job .tab-content ul {
+    width: 19rem;
+    margin: 0 auto;
+    padding: 0;
+}
+#page-job .tab-content li {
+    width: 2.71rem;
+    border: 0.06rem solid #cecece;
+    border-right: 0;
+    padding-top: 0.55rem;
+    padding-bottom: 0.6rem;
+    box-sizing: border-box;
+    display: inline-block;
+    background: #fff;
+    font-size: 0.8rem;
+    color: #474747;
+    cursor: pointer;
+    transition: background 0s;
+    text-align: center;
+}
+#page-job .tab-content li:first-child {
+    border-radius: 0.25rem 0 0 0.25rem;
+    width: 2.72rem !important;
+}
+#page-job .tab-content li:last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
+    border-right: 0.06rem solid #cecece;
+    width: 2.72rem !important;
+}
+#page-job #tab-time {
+    margin-top: -0.05rem;
+}
+#page-job #start_time, #page-job #end_time {
+    width: 5.2rem;
+    border-right: 0;
+    margin: 0;
+}
+#page-job #end_time {
+    margin-left: 0.25rem;
+}
+#page-job #start_ampm, #page-job #end_ampm {
+    width: 4rem;
+    margin: 0;
+    margin-right: 0.25rem;
+}
+#page-job #end_ampm {
+    margin: 0;
+}
+#page-job #job-wage {
+    width: 12rem;
+    border-right: 0;
+    border-radius: 0.25rem 0 0 0.25rem;
+}
+#page-job .sign {
+    position: absolute;
+    color: #525252;
+    margin-top: 0.6rem;
+    margin-left: 1rem;
+}
+#page-job #every {
+    width: 7rem;
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+#page-job #application-form {
+    margin-top: 2rem;
+}
+#page-job .job-question{
+    margin-bottom: 0.5rem;
+}
+#page-job .question{
+    margin-bottom: 1rem;
+}
+#page-job .add, #page-job .subtract {
+    font-size: 0.9rem !important;
+    font-weight: 400 !important;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.3rem;
+}
+#page-job .label {
+    width: 1px;
+    height: 0;
+    margin-left: 1rem;
+    font-size: 0.8rem;
+}
+#page-job #job-tag {
+    padding-left: 2rem;
+    width: 15.9rem;
+    margin-top: -2rem;
+}
+#page-job #job-tags {
+    min-height: 1.8rem;
+    width: 19rem;
+}
+#page-job .job-tag-delete {
+    font-size: 0.8rem;
+    margin: 0.5rem;
+}
+#page-job .job-tag-delete:hover {
+    color: #E55A5A;
+}
+#page-job #submit {
+    width: 19rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+#page-job #row-money {
+    margin-bottom: 2.3rem;
+}
+#page-job #row-description {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+#page-job #apply-questions {
+    margin-top: 6rem;
+}
+#page-job #tags .tag {
+    font-size: 0.8rem;
+    margin-right: 0.6rem;
+    font-weight: 600;
+}
+
+#page-job-applications #applications {
+    padding: 1rem;
+    margin: 0 auto;
+}
+ #page-job-applications .empty-list {
+    margin: 1rem;
+}
+#page-job-applications .div-application {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+}
+#page-job-applications .application {
+    padding: 0;
+    margin: 1rem;
+    height: auto;
+    max-width: 40rem;
+}
+#page-job-applications .section-profile {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 0;
+}
+#page-job-applications .section-profile .left {
+    text-align: center;
+    vertical-align: top;
+}
+#page-job-applications .section-profile .right {
+    text-align: left;
+    padding: 1rem;
+    padding-left: 0;
+    vertical-align: top;
+}
+#page-job-applications .section-profile .info {
+    margin-top: 0.5rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.8rem;
+}
+#page-job-applications .section-profile .picture {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    padding: 0;
+    margin: 2rem auto;
+    margin-bottom: 1rem;
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+    background-image: url('/static/img/profile.svg');
+}
+#page-job-applications .section-profile .name {
+    font-family: 'Questrial', sans-serif;
+    padding: 0 0.5rem;
+    margin-bottom: 2rem;
+}
+#page-job-applications .section-profile .div-status {
+    float: left;
+    padding: 0.7rem;
+}
+#page-job-applications .section-profile .status {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: #FFA539;
+}
+#page-job-applications .section-profile .status.accepted {
+    background: #E55A5A;
+}
+#page-job-applications .section-profile .status.declined {
+    background: #7a7a7a;
+}
+#page-job-applications .section-form {
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+    background: #f4f4f4;
+    border-radius: 0.25rem;
+    margin: 0.5rem;
+}
+#page-job-applications .section-form .question {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding: 0 1rem;
+    text-align: left;
+}
+#page-job-applications .section-form .answer {
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+    text-align: left;
+}
+#page-job-applications .section-control {
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+    text-align: center;
+}
+#page-job-applications button {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 45%;
+}
+#page-job-applications .decline {
+    margin-left: 0.5rem;
+}
+
 
 }
