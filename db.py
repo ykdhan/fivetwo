@@ -6,8 +6,8 @@ import random
 import os
 
 
-# DB_PATH = '/var/www/52CO/52CO.sqlite'
-DB_PATH = '52CO.sqlite'
+DB_PATH = '/var/www/52CO/52CO.sqlite'
+# DB_PATH = '52CO.sqlite'
 
 
 # Connect to the database.
@@ -220,6 +220,25 @@ def accepted_applications(job_id):
 
 def declined_applications(job_id):
     return g.db.execute('SELECT *, application.created_at AS apply_date FROM application WHERE job_id = ? AND status = ? ORDER BY created_at DESC', (job_id,'DECLINED')).fetchall()
+
+
+def delete(job_id):
+    job_tag = 'DELETE FROM job_tag WHERE job_id = :job_id'
+    delete_cursor = g.db.execute(job_tag, {'job_id': job_id})
+    g.db.commit()
+    if delete_cursor.rowcount == 1:
+        application = 'DELETE FROM application WHERE job_id = :job_id'
+        delete_cursor = g.db.execute(application, {'job_id': job_id})
+        g.db.commit()
+        if delete_cursor.rowcount == 1:
+            job = 'DELETE FROM job WHERE id = :job_id'
+            delete_cursor = g.db.execute(job, {'job_id': job_id})
+            g.db.commit()
+            if delete_cursor.rowcount == 1:
+                return 1
+            return 2
+        return 3
+    return 0
 
 
 def accept(app_id):

@@ -19,13 +19,8 @@ html {
 
 body {
     width: 100%; height: 100%; background: none;
-    display: -ms-grid;
-    -ms-grid-rows: 1fr;
-    -ms-grid-columns: 13rem 1fr;
-    display: grid;
-    grid-template-columns: 13rem 1fr;
-    grid-template-rows: 1fr;
-    grid-gap: 0;
+    display: -webkit-flex;
+    display: flex;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -213,19 +208,62 @@ img {
     color: #fff;
 }
 
+#alerts {
+    opacity: 0;
+    visibility: hidden;
+    animation: alert 2s ease;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1.5rem;
+    width: 85%;
+    max-width: 22rem;
+    font-size: 0.8rem;
+    background: rgba(255,255,255,0.9);
+    color: #252525;
+    -webkit-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    -moz-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
+    border-radius: 0.5rem;
+    z-index: 9999 !important;
+}
+.alert {
+    text-align: left;
+    margin-bottom: 0.4rem;
+}
+@keyframes alert {
+    0% {visibility: visible; opacity: 1;}
+    80% {opacity: 1; }
+    99% {opacity: 0; }
+    100% {visibility: hidden;}
+}
+
 
 
 #header {
     background: #fff;
     z-index: 10;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 10rem 1fr 4rem;
+    //grid-template-rows: 10rem 1fr 4rem;
     height: 100vh;
     max-height: 100vh;
+    width: 14rem;
+    -webkit-flex: none;
+    flex: none;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    flex-direction: column;
 }
 #header section {
     padding: 1rem;
+}
+#header #logo-section {
+    -webkit-flex-basis: 10rem;
+    flex-basis: 10rem;
+    -webkit-flex: none;
+    flex: none;
 }
 #header #logo {
     cursor: pointer;
@@ -237,6 +275,10 @@ img {
 }
 #header #profile {
     vertical-align: middle;
+    -webkit-flex-basis: 4rem;
+    flex-basis: 4rem;
+    -webkit-flex: none;
+    flex: none;
 }
 #header #profile-picture {
     width: 2rem;
@@ -258,6 +300,8 @@ img {
 
 
 #page {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
     height: 100vh;
     max-height: 100vh;
     padding: 0;
@@ -273,7 +317,11 @@ img {
     background-size: cover;
 }
 
-
+#menus {
+    vertical-align: middle;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+}
 .menu .menu-word {
     display: inline-block;
 }
@@ -546,33 +594,45 @@ img {
 @media all and (max-width: 800px) {
 
 body {
-    width: 100%; height: 100%;
     display: block;
-    padding: 0;
-    margin: 0;
-    font-size: 0.9rem;
 }
 #header {
-    background: #fff;
     z-index: 10;
-    display: grid;
-    grid-template-columns: 4rem 1fr 12rem;
-    grid-template-rows: 1fr;
     height: auto;
     max-height: none;
-    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    -webkit-flex-direction: row;
+    -moz-flex-direction: row;
+    flex-direction: row;
 }
 #header section {
     padding: 1rem;
+    height: auto;
+}
+#header #logo-section {
+    -webkit-flex-basis: 4rem;
+    flex-basis: 4rem;
+    -webkit-flex: none;
+    flex: none;
+    height: auto;
+}
+#header #logo-section div{
+    text-align: left;
 }
 #header #profile-section {
     padding-top: 0.65rem;
     padding-bottom: 0.5rem;
+    -webkit-flex-basis: 12rem;
+    flex-basis: 12rem;
+    -webkit-flex: none;
+    flex: none;
 }
 #header #logo {
     width: 2rem;
@@ -615,10 +675,12 @@ body {
 }
 
 #page {
-    height: auto;
     max-height: inherit;
     padding: 0;
     margin: 0;
+    height: auto;
+    max-height: none;
+    min-height: 100vh;
     margin-top: 3rem;
     overflow-y: auto;
     background: rgb(229,90,90);
@@ -632,7 +694,7 @@ body {
     padding: 1rem;
     margin: 0 auto;
     position: fixed;
-    top: 3.3rem;
+    top: 4rem;
     width: 100%;
     border-radius: 0;
     background: none;
@@ -675,6 +737,9 @@ body {
 .div-job {
     width: 50%;
 }
+.job {
+    margin-bottom: 2rem;
+}
 
 
 
@@ -682,18 +747,30 @@ body {
 
 @media all and (max-width: 600px) {
 
-#header {
-    grid-template-columns: 4rem 1fr 4rem;
-}
 #header #profile-section {
     text-align: right;
+    -webkit-flex-basis: 4rem;
+    flex-basis: 4rem;
+    -webkit-flex: none;
+    flex: none;
 }
 #header #user-name {
     display: none;
 }
+#header #profile-picture {
+    width: 2rem;
+    height: 2rem;
+    margin: 0;
+}
 
+.menu {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    margin-right: 0.9rem;
+}
 .menu img {
-    width: 1.2rem;
+    width: 1.1rem;
 }
 .menu .menu-word.now {
     display: none !important;
@@ -749,6 +826,26 @@ body {
 
 
 
+
+@media all and (max-width: 350px) {
+
+    #div-search input {
+        width: 100%;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    #div-search select {
+        display: none;
+    }
+    .menu {
+        margin: 0;
+        margin-right: 0.6rem;
+    }
+    .menu img {
+        width: 0.9rem;
+    }
+}
 
 
 

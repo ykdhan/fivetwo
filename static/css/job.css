@@ -324,7 +324,22 @@
     font-weight: 600;
 }
 
-
+#page-job #div-delete {
+    text-align: left;
+}
+#page-job .delete {
+    border: 0;
+    padding: 0;
+    font-size: 0.8rem;
+    color: #474747;
+    background: none;
+    border-radius: 0;
+}
+#page-job .delete:hover {
+    color: #E55A5A;
+    border: 0;
+    background: none;
+}
 
 #page-job-applications {
     -webkit-box-sizing: border-box;

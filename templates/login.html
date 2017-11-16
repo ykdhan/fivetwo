@@ -4,21 +4,8 @@
 
 {% block content %}
 
-<div id="page-login" class="align--center">
-    <div id="div-sign-up" class="box">
-        <h1>Sign Up as Community</h1>
-        <form method="POST">
-            {{ signup_form.csrf_token }}
-            <div class="row">{{ signup_form.name(placeholder="Name", class="") }}</div>
-            <div class="row">{{ signup_form.email(placeholder="Email Address", class="") }}</div>
-            <div class="row">{{ signup_form.password(placeholder="Password", class="") }}</div>
-            <div class="row">{{ signup_form.cpassword(placeholder="Confirm Password", class="") }}</div>
-            <div class="row">{{ signup_form.signup_submit(class_='submit') }}</div>
-            <div class="back" style="margin-top: 1rem;">
-            <a href="#login-header"><button type="button">Sign In</button></a>
-            </div>
-        </form>
-    </div>
+<div id="page-login">
+
 </div>
 
 {% endblock %}

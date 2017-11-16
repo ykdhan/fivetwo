@@ -13,13 +13,13 @@
                 <div id="sign-out-word">Sign Out</div><img id="sign-out" alt="Sign Out" src="/static/img/icon-power.svg">
             </div>
         </h1>
-        <a href="#profile-picture">
+        <!--<a href="#profile-picture">-->
             {% if current_user.picture != 'NO' %}
                 <div id="preview-picture" class="box shadow hover" style="background-image: url('/static/profiles/{{ current_user.picture }}')"></div>
             {% else %}
-                <div id="preview-picture" class="box shadow hover"></div>
+                <div onclick="getting_ready()" id="preview-picture" class="box shadow hover"></div>
             {% endif %}
-        </a>
+        <!--</a>-->
     </div>
     <div id="div-profile" class="">
         <form method="POST">
@@ -171,6 +171,11 @@ function logout() {
     }
 }
 
+
+
+function getting_ready() {
+    alert('We are sorry for your inconvenience.\r\nThis function is not available yet.');
+}
 
 </script>
 

@@ -46,30 +46,46 @@
 {% if login == True %}
     <style>
         body {
-            grid-template-columns: 22rem 1fr !important;
+            display: block !important;
         }
         #page {
-            margin-top: 0;
+            margin-top: 0 !important;
         }
     </style>
 <header class="shadow" id="login-header">
-    <section>
+    <section id="logo-section">
         <div class="align--center align--vertical"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
         <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
     </section>
     <section id="section-login" class="align--center">
+        {% if register == True %}
+        <h1>Sign Up as Community</h1>
+            <form method="POST" name="signup_form">
+                {{ signup_form.csrf_token }}
+                <div class="row">{{ signup_form.new_name(placeholder="Name", class="") }}</div>
+                <div class="row">{{ signup_form.new_email(placeholder="Email Address", class="") }}</div>
+                <div class="row">{{ signup_form.new_password(placeholder="Password", class="") }}</div>
+                <div class="row">{{ signup_form.new_cpassword(placeholder="Confirm Password", class="") }}</div>
+                <div class="row">{{ signup_form.signup_submit(class_='submit') }}</div>
+                <div style="margin-top: 0.5rem;">
+                <a href="{{ url_for('login') }}"><button class="cancel" type="button">Cancel</button></a>
+                </div>
+            </form>
+        {% else %}
         <div class="tag font--main align--left">Campus</div>
         <a href="/cas/login"><button class="submit" type="button">Log In as Student/Faculty</button></a>
         <div class="tag font--main align--left" id="tag-community">Community</div>
-        <form method="POST">
+        <form method="POST" name="login_form">
         {{ login_form.csrf_token }}
         {{ login_form.email(placeholder="Email Address") }}<br>
         {{ login_form.password(placeholder="Password") }}<br>
         {{ login_form.login_submit() }}<br>
             <div class="back">
-            <a href="#div-sign-up"><button type="button">Sign Up</button></a>
+            <a href="{{ url_for('register') }}"><button type="button">Sign Up</button></a>
             </div>
         </form>
+        {% endif %}
+
     </section>
     <section class="align--center align--vertical">
         <div id="copyright">BETA &copy; 2017</div>
@@ -82,7 +98,7 @@
     </section>
 {% else %}
 <header class="shadow" id="header">
-    <section>
+    <section id="logo-section">
         <div class="align--center align--vertical"><a href="{{ url_for('index') }}"><img id="logo" class="hover" alt="52CO" src="/static/img/fivetwo.svg"></a></div>
         <div id="campus-name" class="font--black font--500 align--center">Taylor University</div>
     </section>
@@ -113,19 +129,16 @@
 {% endblock %}
 </div>
 
-<div class="alert">
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <div class="alert" role="alert">
-                <div>
+            <div id="alerts" role="alert">
                 {% for message in messages %}
-                    <p>{{ message }}</p>
+                    <div class="alert">{{ message }}</div>
                 {% endfor %}
-                </div>
             </div>
         {% endif %}
     {% endwith %}
-</div>
+
 
 <footer>
 </footer>

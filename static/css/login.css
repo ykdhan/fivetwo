@@ -2,11 +2,15 @@
 #login-header {
     background: #fff;
     z-index: 10;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 10rem 1fr 4rem;
     height: 100vh;
-    max-height: 100vh;
+    max-height: 33rem;
+    width: 93%;
+    max-width: 24rem;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 0.5rem 0.5rem;
 }
 #login-header section {
     padding: 1rem;
@@ -44,6 +48,9 @@
 
 #section-login {
 
+}
+#section-login h1 {
+    text-align: center;
 }
 #section-login input, #section-login .submit {
     width: 15rem;
@@ -84,7 +91,7 @@
     box-sizing: border-box;
     margin: 0 auto;
     padding: 6rem 0;
-    height: 100%;
+    min-height: 100vh;
     background: rgb(229,90,90);
     background: -moz-linear-gradient(left,  rgba(229,90,90,0.85) 0%, rgba(255,165,57,0.85) 100%);
     background: -webkit-linear-gradient(left,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
@@ -101,10 +108,10 @@
 }
 
 #div-sign-up {
-    width: 17rem;
     vertical-align: middle;
-    position: relative;
-    padding: 2.5rem;
+    padding: 2.5rem 2rem;
+    width: 90%;
+    max-width: 17rem;
 }
 #div-sign-up .row {
     margin: 0.5rem auto;
@@ -113,10 +120,18 @@
     box-sizing: border-box;
 }
 #div-sign-up input {
-    width: 15rem;
+    width: 13rem;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 #div-sign-up select, #div-sign-up #signup_submit {
-    width: 17rem;
+    width: 15rem;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 
@@ -152,7 +167,7 @@
     border-collapse: collapse;
     background: none;
     cursor: pointer;
-    width: 8.5rem;
+    width: 50%;
     font-size: 0.8rem;
     color: #474747;
     border-collapse: collapse;
@@ -223,6 +238,7 @@
     font-size: 0.7rem;
     color: #7a7a7a;
     bottom: 0;
+    margin-top: 0.7rem;
 }
 
 
@@ -230,6 +246,9 @@
 
 
 @media all and (max-width: 800px) {
+    #page-login, #page-sign-up, #page-welcome {
+        padding: 4rem 0;
+    }
 }
 
 @media all and (max-width: 600px) {
@@ -237,18 +256,9 @@
 #login-header {
     z-index: 10;
     display: block;
-    height: 100vh;
-    max-height: 100vh;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-    margin: 0;
 }
 #login-header section {
     padding: 1rem;
-}
-#login-header #section-login {
-    padding-top: 2rem !important;
 }
 #login-header #logo {
     cursor: pointer;
@@ -279,56 +289,32 @@
     font-size: 0.85rem;
 }
 
-
-
-#page-login, #page-sign-up, #page-welcome {
-    margin: 0 auto;
-    padding: 3rem 0;
-    height: auto;
-    background: rgb(229,90,90);
-    background: -moz-linear-gradient(left,  rgba(229,90,90,0.85) 0%, rgba(255,165,57,0.85) 100%);
-    background: -webkit-linear-gradient(left,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
-    background: linear-gradient(to right,  rgba(229,90,90,0.85) 0%,rgba(255,165,57,0.85) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e55a5a', endColorstr='#ffa539',GradientType=1 );
-    vertical-align: middle;
-}
-#page-sign-up, #page-welcome {
-    padding: 6rem 0;
-    height: 100vh;
-    max-height: 100vh;
-}
-
 #div-sign-up {
-    width: 15rem;
-    vertical-align: middle;
-    position: relative;
-    padding: 2.5rem;
+    padding: 2rem 1.5rem;
 }
 #div-sign-up .row {
     margin: 0.5rem auto;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 }
 #div-sign-up input {
-    width: 15rem;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+    //width: 13rem;
 }
 #div-sign-up select, #div-sign-up #signup_submit {
-    width: 15rem;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+    //width: 15rem;
 }
 
 
 #div-welcome {
-    width: 15rem;
+    width: 90%;
+    max-width: 20rem;
     padding: 2.5rem;
 }
 
 
 
+}
+
+@media all and (max-width: 350px) {
+    #login-header #logo-section {
+        padding: 0;
+    }
 }

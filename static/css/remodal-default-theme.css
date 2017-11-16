@@ -12,13 +12,15 @@
 /* Default theme styles of the overlay */
 
 .remodal-overlay {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(4, 4, 4, 0.2);
+  z-index: 99 !important;
 }
 
 .remodal-overlay.remodal-is-opening,
 .remodal-overlay.remodal-is-closing {
   animation-duration: 0.3s;
   animation-fill-mode: forwards;
+  z-index: 99 !important;
 }
 
 .remodal-overlay.remodal-is-opening {
@@ -33,13 +35,15 @@
 
 .remodal-wrapper {
   //padding: 1.5rem;
+  z-index: 99 !important;
 }
 
 /* Default theme styles of the modal dialog */
 
 .remodal {
   box-sizing: border-box;
-  width: 100%;
+  width: 93%;
+  max-width: 21rem;
 
   transform: translate3d(0, 0, 0);
     -webkit-box-shadow: 0 0 0.5rem rgba(85,85,85,0.5);
@@ -51,6 +55,7 @@
   border-radius: 0.5rem;
   color: #474747;
   background: #fff;
+  z-index: 99 !important;
 }
 
 .remodal.remodal-is-opening,

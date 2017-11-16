@@ -150,6 +150,7 @@
                 </div>
             </div>
             <div class="row">{{ form.submit(class_='submit') }}</div>
+            <div id="div-delete" class="row"><button class="delete" onclick="delete_job('{{ job.id }}')">Delete</button></div>
                 {{ form.only_campus() }}{{ form.term() }}{{ form.day() }}{{ form.wage() }}{{ form.tags() }}{{ form.questions() }}
         </form>
 
@@ -640,6 +641,24 @@
                 console.log(form_questions);
             }
 
+            function delete_job(j) {
+                if(window.confirm('Would you like to DELETE this job as well as all the applications?')) {
+                    $.ajax({
+                        url: "/job/"+j+"/delete",
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        success: function(data) {
+                            console.log(data);
+                            if (data == 1) {
+                                window.location.href = "";
+                            } else {
+                                alert("Error: "+data);
+                            }
+                        }
+                    });
+                }
+            }
 
             load_data();
 
